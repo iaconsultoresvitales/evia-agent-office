@@ -7,7 +7,9 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # Temporal: macos-latest usa ARM64 y GitHub reportó falta de runners disponibles.
+        # Restaurar la validación ARM64 cuando se recupere su capacidad; Intel no la sustituye.
+        os: [ubuntu-latest, macos-15-intel, windows-latest]
         node: [20, 22]
     runs-on: ${{ matrix.os }}
     steps:
