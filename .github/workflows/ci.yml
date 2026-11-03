@@ -21,6 +21,8 @@ jobs:
       - run: npm run build
       - name: Locale files are valid JSON with the same keys
         run: node scripts/check-locales.mjs
+      - name: EVIA Spanish locale and fallback
+        run: node scripts/test-evia-locale.mjs
       - name: Server starts, serves the UI and shuts down
         run: node scripts/smoke.mjs
         env:
