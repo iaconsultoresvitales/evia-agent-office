@@ -1,3 +1,11 @@
+> **EVIA Agent Office · adaptación privada en desarrollo**
+>
+> Esta rama agrega localización inicial en español, perfiles EVIA y una línea base de seguridad. Para configuración y alcance, consulta [EVIA Foundation](docs/EVIA_FOUNDATION.md), [seguridad](docs/EVIA_SECURITY.md) y [roles](evia/roles/README.md).
+>
+> Proyecto derivado de Pixel Office de Basri Ayaz. Conservamos la licencia MIT, los avisos de atribución y el historial de origen. La documentación original se mantiene a continuación. **No desplegar ni conectar datos de clientes todavía.**
+
+---
+
 <div align="center">
 
 # Pixel Office
