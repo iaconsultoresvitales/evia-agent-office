@@ -25,6 +25,10 @@ jobs:
         run: node scripts/check-locales.mjs
       - name: EVIA Spanish locale and fallback
         run: node scripts/test-evia-locale.mjs
+      - name: EVIA role catalog uses versioned plan-only profiles
+        run: node scripts/test-evia-roles.mjs
+      - name: EVIA hiring UI JavaScript syntax
+        run: node --check web/hire.js
       - name: Server starts, serves the UI and shuts down
         run: node scripts/smoke.mjs
         env:
