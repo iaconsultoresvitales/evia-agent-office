@@ -32,11 +32,14 @@
       "sick": "Descansando"
     },
     "status": {
-      "idle": "Disponible",
-      "working": "Trabajando",
-      "waiting": "Esperando",
-      "error": "Error",
-      "sick": "Descansando"
+      "list": "Vista de lista",
+      "chips": "Volver a las fichas",
+      "noDesk": "+{n} sin escritorio",
+      "noDeskTag": "sin escritorio",
+      "noDeskTip": "Los agentes adicionales trabajan normalmente, aunque no se dibujan en la oficina. Usa la lista para verlos.",
+      "noTask": "sin tarea",
+      "contextTip": "Contexto que el modelo relee en cada paso",
+      "costTip": "Costo de hoy"
     },
     "tools": {
       "button": "Herramientas",
