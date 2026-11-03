@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hire — Pixel Office</title>
+  <title>Contratar — EVIA Agent Office</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -11,7 +11,7 @@
 </head>
 <body class="page hire-page">
   <header class="topbar">
-    <a class="brand" href="/"><span class="brand-dot"></span><span class="brand-name" data-i18n="ui.brand">OFFICE</span></a>
+    <a class="brand" href="/"><span class="brand-dot"></span><span class="brand-name" data-i18n="ui.brand">EVIA OFFICE</span></a>
     <div class="crumb" data-i18n="ui.hire.crumb">Hire</div>
     <span id="langHost"></span>
     <a class="btn ghost" href="/" data-i18n="ui.hire.back">← Back to office</a>
@@ -44,6 +44,11 @@
         <div class="field">
           <span><span data-i18n="ui.hire.presets"></span> <small data-i18n="ui.hire.presetsHint"></small></span>
           <div class="preset-row" id="presets"></div>
+        </div>
+        <div class="field">
+          <span>EVIA · <span data-i18n="ui.hire.presets"></span> <small data-i18n="ui.hire.presetsHint"></small></span>
+          <div class="preset-row" id="eviaPresets"></div>
+          <small class="muted" id="eviaPresetsStatus" role="status"></small>
         </div>
         <label class="field">
           <span data-i18n="ui.hire.cwd"></span><input id="cwd" maxlength="500" data-i18n-ph="ui.hire.cwdPh" autocomplete="off" />
