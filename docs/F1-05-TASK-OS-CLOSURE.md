@@ -3,7 +3,7 @@
 **Proyecto:** EVIA Office OS. **Fase:** F1, cierre del backend contractual local-first.
 **Baseline:** `main@6a28948ecb412f44d8d1a30145a118720c6ca541`.
 **Rama de implementación:** `feature/f1-05-task-os-closure`.
-**Estado de este documento:** IMPLEMENTACIÓN EN RAMA, QA y revisión final pendientes.
+**Estado vigente:** IMPLEMENTADO y PROBADO en [PR #12](https://github.com/iaconsultoresvitales/evia-agent-office/pull/12), CI de la implementación 6/6 PASS. REVISIÓN DE SALVA, FUSIÓN y DESPLIEGUE no realizados.
 **Fecha:** 4 de noviembre de 2026.
 
 ## 1. Objetivo y alcance de cierre
@@ -41,19 +41,20 @@ Las referencias siguen con `verification: pending`. La representación `by: user
 
 ## 4. Evidencia de ejecución y revisión
 
-**Pendiente de completar después de ejecutar y verificar:**
+**Evidencia constatada:** [GitHub Actions run #37](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41920058801), commit `5e4a8b19c371758fc3c9be91ccfb50f3984e267d`, seis jobs terminados correctamente.
 
 | Verificación | Resultado | Evidencia |
 | --- | --- | --- |
 | `node --check scripts/test-task-os-integration.mjs` | PASS local, 2026-11-04 | Comprobación de sintaxis. |
 | `git diff --check` | PASS local inicial, 2026-11-04 | Sin errores de formato en cambios iniciales. |
 | `npm ci` local | BLOQUEADO por acceso/caché npm del entorno de trabajo | No interpretar como fallo del código. |
-| `npm run typecheck` | PENDIENTE | Ejecutar con dependencias instaladas. |
-| `npm run build` | PENDIENTE | Ejecutar con dependencias instaladas. |
-| `npm test` | PENDIENTE | Suite completa, Ubuntu Node 22 en CI. |
-| `node scripts/smoke.mjs` | PENDIENTE | Servidor efímero, sin datos operativos. |
-| GitHub Actions Ubuntu/Windows/macOS Intel × Node 20/22 | PENDIENTE | Adjuntar URL, SHA y 6/6 PASS o defectos. |
-| Revisión de diff/seguridad | PENDIENTE | Auditoría de alcance antes de aceptación. |
+| `npm run typecheck` | PASS en los 6 jobs CI | Run #37, pasos de typecheck. |
+| `npm run build` | PASS en los 6 jobs CI | Run #37, pasos de build. |
+| `npm test` | PASS Ubuntu/Node 22 | Run #37, suite completa. |
+| `node scripts/smoke.mjs` | PASS en los 6 jobs CI | Run #37, smoke local de runner. |
+| Prueba F1-05 específica | PASS en los 6 jobs CI | Run #37, paso “F1-05 integrated Task OS lifecycle and reconciliation”. |
+| GitHub Actions Ubuntu/Windows/macOS Intel × Node 20/22 | 6/6 PASS | Run #37, commit `5e4a8b1`. |
+| Revisión de diff/seguridad | Alcance y formato revisados; aceptación final pendiente | Nueve archivos, ningún cambio en `src/server`; revisión de Salva pendiente. |
 | Aprobación de Salva y merge | NO AUTORIZADOS por defecto | PR para revisión, sin auto-merge. |
 | Instalación operativa Mac y despliegue | NO REALIZADOS | Fuera de alcance. |
 
@@ -75,11 +76,11 @@ Antes de merge, abandonar la rama. Después de merge autorizado, revertir los co
 
 ## 7. Puerta de salida
 
-- [ ] Tests integrados positivos/negativos reproducibles.
-- [ ] Typecheck, build, suite completa, smoke y CI 6/6 PASS.
-- [ ] Compatibilidad legacy y no duplicación acreditadas.
-- [ ] Diff sin secretos, endpoints nuevos, migraciones ni acciones externas.
-- [ ] Estados documentales actualizados con evidencias.
+- [x] Tests integrados positivos/negativos reproducibles en CI run #37.
+- [x] Typecheck, build, suite completa, smoke y CI 6/6 PASS en commit `5e4a8b1`.
+- [x] Compatibilidad legacy y no duplicación cubiertas por tests.
+- [x] Diff acotado sin cambios de endpoints, migraciones ni herramientas externas.
+- [x] Estados documentales actualizados con evidencias.
 - [ ] Salva revisa y acepta el cierre F1 como backend opt-in.
 - [ ] Fusión a `main` solo tras autorización explícita independiente.
 

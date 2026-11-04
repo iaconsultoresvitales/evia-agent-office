@@ -85,7 +85,7 @@ Abrir [http://127.0.0.1:4747](http://127.0.0.1:4747). No se debe usar el directo
 | **F1-02** | Task Service y transiciones gestionadas | **Fusionado y probado** en CI ([PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6)) |
 | **F1-03** | Evidencia y eventos correlacionados | **Fusionado y probado** en CI ([PR #8](https://github.com/iaconsultoresvitales/evia-agent-office/pull/8)) |
 | **F1-04** | Recuperación e idempotencia de Task OS | **Fusionado y probado** en CI ([PR #10](https://github.com/iaconsultoresvitales/evia-agent-office/pull/10)) |
-| **F1-05** | Integración y cierre de QA del backend Task OS | **En implementación en rama**; pruebas y aceptación pendientes. No conecta todavía UI ni agentes con TaskService |
+| **F1-05** | Integración y cierre de QA del backend Task OS | **Implementado y probado en PR #12**, CI 6/6 PASS ([run #37](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41920058801)); revisión, merge y despliegue pendientes. UI y agentes no conectados |
 | **F2 a F5** | Director IA, aislamiento, QA y aprobaciones | **Objetivos futuros**, no funcionalidades terminadas |
 | **F6 a F8** | Integraciones, observabilidad, pilotos y productización | Objetivo posterior |
 
