@@ -27,6 +27,8 @@ jobs:
         run: node scripts/test-evia-locale.mjs
       - name: EVIA role catalog uses versioned plan-only profiles
         run: node scripts/test-evia-roles.mjs
+      - name: F1-01 task contract validation and legacy compatibility
+        run: node scripts/test-task-contract.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
@@ -35,6 +37,9 @@ jobs:
           node scripts/test-chat-copy.mjs
       - name: Furniture rotation (orientations, collisions, saved layout)
         run: node scripts/test-furniture-rotation.mjs
+      - name: Full npm test suite (Ubuntu Node 22)
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 22
+        run: npm test
       - name: Server starts, serves the UI and shuts down
         run: node scripts/smoke.mjs
         env:
