@@ -91,6 +91,16 @@ try {
   assert.equal(board.pendingTaskAudits.length, 0);
   assert.equal(journal.inspect().length, 0);
 
+  // A torn final JSONL line must be preserved, not concatenated with the recovery event.
+  fs.appendFileSync(path.join(dir, "events.jsonl"), '{"id":999,"ts":1,"kind":"task_contract_transition","data":');
+  board = new Board(dir); events = new EventLog(dir);
+  journal = new TaskEvidenceJournal(board, events, "office-001"); service = new TaskService(board, journal);
+  service.transition({ id: 1, from: "review", to: "done", by: "user", operationId: "torn-tail-001" });
+  assert.equal(events.all().filter((x) => x.data?.operationId === "torn-tail-001").length, 1);
+  assert.equal(journal.inspect().length, 0);
+  const rawLog = fs.readFileSync(path.join(dir, "events.jsonl"), "utf8");
+  assert.ok(rawLog.includes('"data":\n{'), "Torn line remains separate from recovered event");
+
   // Legacy Board use stays opt-in, with no outbox or external execution.
   board.addTask("mariels", "Legacy task", "Legacy", "user");
   assert.equal(board.pendingTaskAudits.length, 0);
