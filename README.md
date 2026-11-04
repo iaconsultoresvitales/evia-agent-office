@@ -140,7 +140,7 @@ The talking is real, too. Every employee has two office tools, `list_colleagues`
 <a id="design-your-office"></a>
 ### Design your office
 
-**🧰 Tools → ✏️ Edit layout** turns the office into an editor. Drag any piece to move it (a green ghost where it fits, red where it does not), **R** rotates, **Ctrl+D** copies, **Del** puts it in the depot, **Ctrl+Z** undoes, and holding **C** shows the saved office for a before/after comparison. Wall decor moves too. The editor refuses layouts that would block a door, seal the entrance or leave an employee without a desk, so the office always stays walkable. **Save** keeps it per office (`layout.json`), **Back to default** starts over.
+**🧰 Tools → ✏️ Edit layout** turns the office into an editor. Drag any piece to move it (a green ghost where it fits, red where it does not), **R** rotates (**Shift+R** the other way, or the **Rotate** button; works while you hold a new piece, after placing it and while dragging. Only stools and meeting chairs turn: an arrow marks them in the editor, any other piece says it has a single orientation), **Ctrl+D** copies, **Del** puts it in the depot, **Ctrl+Z** undoes, and holding **C** shows the saved office for a before/after comparison. Wall decor moves too. The editor refuses layouts that would block a door, seal the entrance or leave an employee without a desk, so the office always stays walkable. **Save** keeps it per office (`layout.json`), **Back to default** starts over.
 
 ![Layout editor with the depot](docs/layout-editor.jpg)
 

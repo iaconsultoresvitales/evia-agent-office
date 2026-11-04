@@ -575,7 +575,19 @@ function buildRow(e, msg) {
   } else {
     row.innerHTML = `<div class="sys">${escapeHtml(msg.text)}</div>`;
   }
+  if (msg.role === "assistant" || msg.role === "colleague" || msg.role === "meeting") addCopyButton(row, msg);
   return row;
+}
+
+// "Copy" on a finished reply (live or loaded from the history): it copies msg.text, the stored Markdown, and changes nothing in the conversation.
+// The streaming placeholder has no text yet, so it gets no button; the final message that replaces it does.
+function addCopyButton(row, msg) {
+  const meta = row.querySelector(".row-meta");
+  if (!meta || !msg.text) return;
+  meta.classList.add("has-copy");
+  meta.appendChild(POCopy.button(() => msg.text, {
+    copy: t("ui.chat.copy"), tip: t("ui.chat.copyTip"), copied: t("ui.chat.copied"), failed: t("ui.chat.copyFailed"),
+  }, { onFail: (text) => toast(text) }));
 }
 
 function renderAsk(e, ask) {

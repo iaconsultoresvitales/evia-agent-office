@@ -29,6 +29,12 @@ jobs:
         run: node scripts/test-evia-roles.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
+      - name: Chat copy button (exact Markdown, fallback, wiring)
+        run: |
+          node --check web/copy.js
+          node scripts/test-chat-copy.mjs
+      - name: Furniture rotation (orientations, collisions, saved layout)
+        run: node scripts/test-furniture-rotation.mjs
       - name: Server starts, serves the UI and shuts down
         run: node scripts/smoke.mjs
         env:

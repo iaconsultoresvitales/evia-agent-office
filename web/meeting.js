@@ -132,6 +132,7 @@ const meetingUI = (() => {
     } else {
       row.className = "row assistant";
       row.innerHTML = `<img class="row-avatar" src="${portrait(entry.from)}" alt="" /><div class="row-main"><div class="row-meta">${escapeHtml(entry.name || "")} · ${timeStr(entry.ts)}</div><div class="bubble">${md(entry.text)}</div></div>`;
+      addCopyButton(row, entry); // (app.js: copies entry.text, the stored Markdown)
     }
     add(row);
   }

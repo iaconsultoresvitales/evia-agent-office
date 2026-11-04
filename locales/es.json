@@ -71,10 +71,26 @@
       "today": "Hoy",
       "older": "Ver mensajes anteriores",
       "olderFailed": "No se pudieron cargar los mensajes",
+      "copy": "Copiar",
+      "copyTip": "Copiar la respuesta completa (Markdown)",
+      "copied": "Copiado",
+      "copyFailed": "No se pudo copiar. Selecciona el texto y cópialo manualmente.",
       "actions": "{n} acciones",
       "actions_one": "{n} acción",
       "answer": "Responder",
       "skip": "Omitir"
+    },
+    "layout": {
+      "rotate": "Girar",
+      "rotateTip": "Girar (R) · en sentido contrario (Mayús+R)",
+      "noRotate": "{name} no se puede girar: solo tiene una orientación",
+      "facing": "Orientado hacia {dir}",
+      "dir": {
+        "up": "arriba",
+        "down": "abajo",
+        "left": "la izquierda",
+        "right": "la derecha"
+      }
     },
     "board": {
       "button": "Tablero",
