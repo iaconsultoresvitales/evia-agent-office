@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { appendJsonLineSync, readJsonLines } from "./fsutil.js";
 
@@ -41,6 +42,24 @@ export class EventLog {
   add(ev: Omit<OfficeEvent, "id" | "ts">): OfficeEvent {
     const full: OfficeEvent = { id: this.next++, ts: Date.now(), ...ev };
     for (const k of Object.keys(full) as Array<keyof OfficeEvent>) if (full[k] === undefined) delete full[k];
+    // A crash may leave the last JSONL line incomplete and without a newline.
+    // Preserve those bytes for inspection; start the next valid event on its own line.
+    let needsSeparator = false;
+    let fd: number | undefined;
+    try {
+      fd = fs.openSync(this.file, "r");
+      const size = fs.fstatSync(fd).size;
+      if (size > 0) {
+        const last = Buffer.alloc(1);
+        fs.readSync(fd, last, 0, 1, size - 1);
+        needsSeparator = last[0] !== 10;
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    } finally {
+      if (fd !== undefined) fs.closeSync(fd);
+    }
+    if (needsSeparator) fs.appendFileSync(this.file, "\n");
     appendJsonLineSync(this.file, full);
     this.list.push(full);
     if (this.list.length > KEEP * 1.2) this.list.splice(0, this.list.length - KEEP);
@@ -60,3 +79,4 @@ export class EventLog {
     return out;
   }
 }
+

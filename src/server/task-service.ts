@@ -1,6 +1,6 @@
 import { Board, type Task, type TaskStatus } from "./board.js";
 import { parseTaskContractV1, type TaskContractV1 } from "./task-contract.js";
-import type { TaskEvidenceJournal } from "./task-evidence.js";
+import { taskOperationDigest, type TaskEvidenceJournal } from "./task-evidence.js";
 
 /** F1-02: an opt-in, file-backed workflow for contracted tasks. */
 export type TaskServiceCode =
@@ -74,9 +74,19 @@ export class TaskService {
         throw new TaskServiceError("invalid_input", `Prerequisite #${id} belongs to another project`);
       }
     }
+    const digest = taskOperationDigest("task_contract_created", { owner, createdBy, title,
+      detail: input.detail ?? "", contract, after, runRef: input.runRef });
+    const receipt = this.journal?.receipt(input.operationId, "task_contract_created", digest);
+    if (receipt) {
+      this.journal!.flush();
+      const saved = this.board.tasks.find((item) => item.id === receipt.taskId);
+      if (!saved || !saved.contract) throw new TaskServiceError("conflict", "Audited creation receipt has no matching task");
+      return saved;
+    }
     const operation = this.journal?.preflight(input.operationId, input.runRef);
-    const task = this.board.addTask(owner, title, input.detail ?? "", createdBy, true, after, undefined, contract);
-    this.journal?.recordCreate(task, createdBy, operation!, input.runRef);
+    const task = this.board.addTask(owner, title, input.detail ?? "", createdBy, true, after, undefined, contract,
+      this.journal ? (task) => this.journal!.prepareCreate(task, createdBy, operation!, digest, input.runRef) : undefined);
+    this.journal?.flush();
     return task;
   }
 
@@ -84,6 +94,16 @@ export class TaskService {
     const task = this.board.tasks.find((candidate) => candidate.id === input.id);
     if (!task) throw new TaskServiceError("not_found", `Task #${input.id} not found`);
     const contract = managedContract(task);
+    const digest = taskOperationDigest("task_contract_transition", {
+      id: input.id, from: input.from, to: input.to, by: input.by, note: input.note,
+      evidenceRefs: input.evidenceRefs, runRef: input.runRef,
+    });
+    const receipt = input.operationId === undefined ? undefined : this.journal?.receipt(input.operationId, "task_contract_transition", digest);
+    if (receipt) {
+      if (receipt.taskId !== input.id) throw new TaskServiceError("conflict", "Operation belongs to a different task");
+      this.journal!.flush();
+      return { task, changed: false };
+    }
     if (task.status !== input.from) {
       throw new TaskServiceError("conflict", `Expected ${input.from}, found ${task.status}`);
     }
@@ -142,9 +162,10 @@ export class TaskService {
       status: input.to,
       ...(note ? { note } : {}),
       ...(refs.length ? { contract: nextContract } : {}),
-    }, by);
+    }, by, this.journal ? (updated) => this.journal!.prepareTransition(updated, input.from, by, operation!, digest, addedEvidence, input.runRef) : undefined);
     if (!updated) throw new TaskServiceError("not_found", `Task #${input.id} disappeared`);
-    this.journal?.recordTransition(updated, input.from, by, operation!, addedEvidence, input.runRef);
+    this.journal?.flush();
     return { task: updated, changed: true };
   }
 }
+

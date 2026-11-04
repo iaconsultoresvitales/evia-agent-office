@@ -2,6 +2,16 @@ import path from "node:path";
 import { EventEmitter } from "node:events";
 import { isObject, readJsonSafe, writeJsonAtomicSync } from "./fsutil.js";
 import { parseTaskContractV1, type TaskContractV1 } from "./task-contract.js";
+import type { OfficeEvent } from "./events.js";
+
+/** F1-04 durable task audit outbox. The event is metadata, never task contents. */
+export interface PendingTaskAudit {
+  outboxId: string;
+  officeId: string;
+  operationId: string;
+  taskId: number;
+  event: Omit<OfficeEvent, "id" | "ts">;
+}
 
 export type TaskStatus = "todo" | "doing" | "review" | "done" | "blocked";
 export const TASK_STATUSES: readonly TaskStatus[] = ["todo", "doing", "review", "done", "blocked"];
@@ -78,7 +88,7 @@ function similarTitle<T extends { title: string }>(items: T[], title: string): T
   });
 }
 
-interface BoardData { nextTask: number; nextNote: number; nextIdea: number; tasks: Task[]; notes: Note[]; ideas: Idea[] }
+interface BoardData { nextTask: number; nextNote: number; nextIdea: number; tasks: Task[]; notes: Note[]; ideas: Idea[]; taskAuditOutbox?: PendingTaskAudit[] }
 
 // The office's shared space: a notebook everybody writes important findings into, and the task list
 // the project manager (or the boss) assigns work through. One JSON file per office; every change emits "change".
@@ -93,7 +103,7 @@ export class Board extends EventEmitter {
     // read at all is moved aside (board.json.corrupt-<ts>) before an empty board is started, so no save can overwrite it.
     const loaded = readJsonSafe<Partial<BoardData>>(this.file, () => ({}), { validate: isObject, label: "board" });
     const list = <T>(v: T[] | undefined): T[] => (Array.isArray(v) ? v : []);
-    this.data = { nextTask: loaded.nextTask ?? 1, nextNote: loaded.nextNote ?? 1, nextIdea: loaded.nextIdea ?? 1, tasks: list(loaded.tasks), notes: list(loaded.notes), ideas: list(loaded.ideas) };
+    this.data = { nextTask: loaded.nextTask ?? 1, nextNote: loaded.nextNote ?? 1, nextIdea: loaded.nextIdea ?? 1, tasks: list(loaded.tasks), notes: list(loaded.notes), ideas: list(loaded.ideas), ...(Array.isArray(loaded.taskAuditOutbox) ? { taskAuditOutbox: loaded.taskAuditOutbox } : {}) };
   }
 
   private save() {
@@ -104,7 +114,31 @@ export class Board extends EventEmitter {
   get tasks(): Task[] { return this.data.tasks; }
   get notes(): Note[] { return this.data.notes; }
   get ideas(): Idea[] { return this.data.ideas; }
+  get pendingTaskAudits(): readonly PendingTaskAudit[] { return [...(this.data.taskAuditOutbox ?? [])]; }
   state() { return { tasks: this.data.tasks, notes: this.data.notes, ideas: this.data.ideas }; }
+
+  /** Removes only an acknowledged journal entry, never the business task itself. */
+  acknowledgeTaskAudit(outboxId: string): boolean {
+    const pending = this.data.taskAuditOutbox ?? [];
+    const idx = pending.findIndex((item) => item.outboxId === outboxId);
+    if (idx < 0) return false;
+    pending.splice(idx, 1);
+    this.save();
+    return true;
+  }
+
+  private enqueueTaskAudit(task: Task, create?: (task: Task) => PendingTaskAudit): void {
+    if (!create) return;
+    const item = create(task);
+    if (item.taskId !== task.id || item.event.task !== task.id || !item.outboxId || !item.operationId || !item.officeId) {
+      throw new Error("Invalid task audit outbox item");
+    }
+    if (!this.data.taskAuditOutbox) this.data.taskAuditOutbox = [];
+    if (this.data.taskAuditOutbox.some((existing) => existing.outboxId === item.outboxId || (existing.officeId === item.officeId && existing.operationId === item.operationId))) {
+      throw new Error("Duplicate pending task audit operation");
+    }
+    this.data.taskAuditOutbox.push(item);
+  }
 
   // ---- notebook ----
   addNote(by: string, byName: string, title: string, text: string, tags: string[] = []): Note {
@@ -222,13 +256,14 @@ export class Board extends EventEmitter {
   }
 
   // ---- tasks ----
-  addTask(owner: string, title: string, detail: string, createdBy: string, review = false, after: number[] = [], kind?: "discovery", contract?: unknown): Task {
+  addTask(owner: string, title: string, detail: string, createdBy: string, review = false, after: number[] = [], kind?: "discovery", contract?: unknown, audit?: (task: Task) => PendingTaskAudit): Task {
     // Validate before allocating an ID or writing anything to disk.
     const acceptedContract = contract === undefined ? undefined : parseTaskContractV1(contract);
     const now = Date.now();
     const deps = [...new Set(after)].filter((id) => this.data.tasks.some((x) => x.id === id));
     const task: Task = { id: this.data.nextTask++, title: title.trim().slice(0, 160), detail: detail.trim().slice(0, 8000), owner, status: "todo", createdBy, created: now, updated: now, notes: [], ...(review ? { review: true } : {}), ...(deps.length ? { after: deps } : {}), ...(kind ? { kind } : {}), ...(acceptedContract ? { contract: acceptedContract } : {}) };
     this.data.tasks.push(task);
+    this.enqueueTaskAudit(task, audit);
     this.save();
     this.emit("added", task);
     return task;
@@ -248,7 +283,7 @@ export class Board extends EventEmitter {
     this.save();
   }
 
-  updateTask(id: number, patch: { status?: TaskStatus; owner?: string; title?: string; detail?: string; note?: string; review?: boolean; after?: number[]; contract?: unknown }, by: string): Task | undefined {
+  updateTask(id: number, patch: { status?: TaskStatus; owner?: string; title?: string; detail?: string; note?: string; review?: boolean; after?: number[]; contract?: unknown }, by: string, audit?: (task: Task) => PendingTaskAudit): Task | undefined {
     const task = this.data.tasks.find((x) => x.id === id);
     if (!task) return undefined;
     // Validate the new contract before any mutation or disk write.
@@ -266,6 +301,7 @@ export class Board extends EventEmitter {
     if (task.status !== "todo") delete task.autoStart;
     if (patch.note?.trim()) task.notes.push({ ts: Date.now(), by, text: patch.note.trim().slice(0, 2000) });
     task.updated = Date.now();
+    this.enqueueTaskAudit(task, audit);
     this.save();
     if (task.owner !== prevOwner || edited) this.emit("edited", task, { owner: task.owner !== prevOwner ? prevOwner : undefined, edited }, by);
     if (task.status !== prev) this.emit("status", task, prev, by); // the office reacts: prerequisites met, digest for the project manager
@@ -280,3 +316,4 @@ export class Board extends EventEmitter {
     return true;
   }
 }
+
