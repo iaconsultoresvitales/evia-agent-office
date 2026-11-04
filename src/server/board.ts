@@ -1,6 +1,7 @@
 import path from "node:path";
 import { EventEmitter } from "node:events";
 import { isObject, readJsonSafe, writeJsonAtomicSync } from "./fsutil.js";
+import { parseTaskContractV1, type TaskContractV1 } from "./task-contract.js";
 
 export type TaskStatus = "todo" | "doing" | "review" | "done" | "blocked";
 export const TASK_STATUSES: readonly TaskStatus[] = ["todo", "doing", "review", "done", "blocked"];
@@ -20,6 +21,7 @@ export interface Task {
   autoStart?: string; // a start was approved (by this employee id or "user") while prerequisites were open: it begins by itself once they are done
   session?: string;   // the Claude session this task runs in, so a task sent back from review continues where it stopped
   kind?: "discovery"; // research only: looks, compares, proposes ideas; changes nothing in the project
+  contract?: TaskContractV1; // optional v1 enterprise contract; legacy tasks remain valid
 }
 
 export interface Note {
@@ -220,10 +222,12 @@ export class Board extends EventEmitter {
   }
 
   // ---- tasks ----
-  addTask(owner: string, title: string, detail: string, createdBy: string, review = false, after: number[] = [], kind?: "discovery"): Task {
+  addTask(owner: string, title: string, detail: string, createdBy: string, review = false, after: number[] = [], kind?: "discovery", contract?: unknown): Task {
+    // Validate before allocating an ID or writing anything to disk.
+    const acceptedContract = contract === undefined ? undefined : parseTaskContractV1(contract);
     const now = Date.now();
     const deps = [...new Set(after)].filter((id) => this.data.tasks.some((x) => x.id === id));
-    const task: Task = { id: this.data.nextTask++, title: title.trim().slice(0, 160), detail: detail.trim().slice(0, 8000), owner, status: "todo", createdBy, created: now, updated: now, notes: [], ...(review ? { review: true } : {}), ...(deps.length ? { after: deps } : {}), ...(kind ? { kind } : {}) };
+    const task: Task = { id: this.data.nextTask++, title: title.trim().slice(0, 160), detail: detail.trim().slice(0, 8000), owner, status: "todo", createdBy, created: now, updated: now, notes: [], ...(review ? { review: true } : {}), ...(deps.length ? { after: deps } : {}), ...(kind ? { kind } : {}), ...(acceptedContract ? { contract: acceptedContract } : {}) };
     this.data.tasks.push(task);
     this.save();
     this.emit("added", task);
