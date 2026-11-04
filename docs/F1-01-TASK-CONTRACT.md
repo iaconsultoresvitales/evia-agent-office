@@ -2,7 +2,7 @@
 
 **Proyecto:** EVIA Office OS  
 **Fase:** F1, primer incremento funcional del Task OS.  
-**Estado:** READY FOR IMPLEMENTATION, **NO IMPLEMENTADO**.  
+**Estado:** IMPLEMENTADO y CI 6/6 PASS; suite completa en CI y revisión humana pendientes.  
 **Fecha de preparación:** 4 de noviembre de 2026.  
 **Decisiones habilitantes:** `ADR-F003-01` y `ADR-F003-02`, ACCEPTED por Salva; `DEC-F003-05` para el caso de prueba.  
 **Código de referencia:** `feature/evia-foundation`, cuya línea de ejecución fue probada en el commit `5033cfb28529395e28e9e0dd47c6b19bcf7904df`.
@@ -23,9 +23,9 @@ Este ticket crea **el esquema y la compatibilidad**. El servicio de transiciones
 
 Fuentes: [`board.ts`](https://github.com/iaconsultoresvitales/evia-agent-office/blob/5033cfb28529395e28e9e0dd47c6b19bcf7904df/src/server/board.ts), [`fsutil.ts`](https://github.com/iaconsultoresvitales/evia-agent-office/blob/5033cfb28529395e28e9e0dd47c6b19bcf7904df/src/server/fsutil.ts), [`package.json`](https://github.com/iaconsultoresvitales/evia-agent-office/blob/5033cfb28529395e28e9e0dd47c6b19bcf7904df/package.json).
 
-## 3. Alcance autorizado para preparar el incremento
+## 3. Alcance autorizado del incremento
 
-### Incluido en la futura implementación
+### Incluido en la implementación
 
 1. Crear `src/server/task-contract.ts` con `TaskContractV1`, esquema Zod y función de validación con errores legibles.
 2. Extender opcionalmente `Task` en `src/server/board.ts` con `contract?: TaskContractV1`, sin alterar la forma de las tareas legadas.
@@ -88,15 +88,15 @@ No crear una base paralela de tareas ni reescribir todos los consumidores del Bo
 
 ## 6. Criterios de aceptación
 
-- [ ] El esquema compila en TypeScript estricto y usa la dependencia Zod existente.
-- [ ] El Board puede agregar y recuperar una tarea nueva con contrato válido.
-- [ ] Contratos sin `projectId`, sin criterio, sin entregable o con rutas inválidas se rechazan sin guardar una tarea parcial.
-- [ ] Tareas antiguas, incluidas las que tienen dependencias o notas, siguen legibles y operables.
-- [ ] Un contrato validado sobrevive a guardar y reconstruir `Board` con el mismo directorio temporal.
-- [ ] Los tests no utilizan red, credenciales ni directorios operativos de la Mac.
+- [x] El esquema compila en TypeScript estricto y usa la dependencia Zod existente.
+- [x] El Board puede agregar y recuperar una tarea nueva con contrato válido.
+- [x] Contratos sin `projectId`, sin criterio, sin entregable o con rutas inválidas se rechazan sin guardar una tarea parcial.
+- [x] Tareas antiguas, incluidas las que tienen dependencias o notas, siguen legibles y operables.
+- [x] Un contrato validado sobrevive a guardar y reconstruir `Board` con el mismo directorio temporal.
+- [x] Los tests no utilizan red, credenciales ni directorios operativos de la Mac.
 - [ ] `npm run typecheck` y `npm test` completan PASS en la rama del incremento.
-- [ ] `node scripts/smoke.mjs` sigue mostrando PASS.
-- [ ] El diff cambia únicamente archivos justificados por T1–T5; se documentan riesgos y regresiones.
+- [x] `node scripts/smoke.mjs` sigue mostrando PASS.
+- [x] El diff cambia únicamente archivos justificados por T1–T5; se documentan riesgos y regresiones.
 - [ ] Salva revisa el resultado antes de merge y despliegue.
 
 ## 7. Casos de prueba obligatorios
@@ -150,10 +150,11 @@ Si una decisión afecta estructura persistente de manera irreversible, detén el
 
 ## 10. Puerta de salida del ticket
 
-**Estado actual:** especificación preparada, sin cambios funcionales.  
-**Para pasar a IMPLEMENTADO:** ejecutar T1–T5 en rama separada.  
-**Para pasar a PROBADO:** cumplir los casos P/N/R y baseline de tests.  
-**Para pasar a REVISADO:** Salva recibe evidencia y acepta el diff.  
-**FUSIONADO/DESPLEGADO:** requieren instrucciones posteriores explícitas.
+**IMPLEMENTADO:** sí, en `feature/f1-01-task-contract`, PR [#5](https://github.com/iaconsultoresvitales/evia-agent-office/pull/5). Cambios en esquema, Board, tests, package y workflow.  
+**CI selectiva:** PASS 6/6 en Ubuntu, macOS Intel y Windows, Node 20/22, run [41877869371](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41877869371), commit `cb26875bd1a5b3e558a1f0df3bb92d855183f84b`.  
+**Suite completa:** añadida en CI para Ubuntu/Node 22 en commit `34b50abb20ffe22fecd6da48970c1c7b5ef5f1ee`; resultado del nuevo run PENDIENTE al actualizar este documento.  
+**Limitación constatada:** un contrato histórico inválido se conserva y puede diagnosticarse con el validador, pero todavía no genera alerta automática en la interfaz.  
+**REVISADO:** pendiente de revisión final y aceptación de Salva.  
+**FUSIONADO/DESPLEGADO:** no; requieren autorización explícita posterior.
 
 **Siguiente ticket tras aceptación:** `F1-02`, Task Service y máquina de estados. La autorización para F1-01 no autoriza implícitamente F1-02.
