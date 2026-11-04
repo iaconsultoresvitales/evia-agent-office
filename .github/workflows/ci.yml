@@ -31,6 +31,8 @@ jobs:
         run: node scripts/test-task-contract.mjs
       - name: F1-02 guarded task transitions and persistence
         run: node scripts/test-task-service.mjs
+      - name: F1-03 task evidence and event correlation
+        run: node scripts/test-task-evidence.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
