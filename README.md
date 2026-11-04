@@ -6,7 +6,7 @@
 
 > **Estado:** prototipo privado en desarrollo, de uso local en macOS. No hay despliegue público ni autorización general para procesar información sensible de clientes.
 
-<!-- Las capturas de la instancia EVIA se incorporarán antes de fusionar este README. -->
+![EVIA Office: oficina virtual personalizada de Estrategias Vitales IA](docs/images/evia-office-hero.png)
 
 ## Propósito
 
@@ -27,6 +27,14 @@ En la versión local de desarrollo:
 - Ejecución local con archivos persistentes y respaldos separados del repositorio.
 
 Los motores y conectores disponibles dependen de la instalación, autenticación y permisos de cada proveedor. Su presencia en la interfaz **no significa** que estén conectados o autorizados.
+
+## Capturas de EVIA Office
+
+| Lauren, inteligencia de mercado | Edición y decoración de la oficina |
+| --- | --- |
+| ![Lauren y su espacio de trabajo en EVIA Office](docs/images/evia-office-lauren.png) | ![Editor de muebles de EVIA Office](docs/images/evia-office-editor.png) |
+
+Las imágenes corresponden a la instalación real de EVIA. Antes de hacer público este repositorio, volver a revisar las capturas para proteger información interna.
 
 ## Alcance y próximos pasos
 
