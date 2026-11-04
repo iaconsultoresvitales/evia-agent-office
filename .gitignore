@@ -3,3 +3,11 @@ dist/
 data/
 .DS_Store
 *.log
+
+# Per-installation state and credentials
+.pixel-office/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
