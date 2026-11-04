@@ -2,7 +2,7 @@
 
 **Ticket:** [#9](https://github.com/iaconsultoresvitales/evia-agent-office/issues/9).  
 **Base:** F1-03 en `main` (`96f746763b3f6d51d9f5418372cf6ecf752bc8d1`).  
-**Estado:** IMPLEMENTACIÓN EN RAMA, QA y revisión pendientes.
+**Estado:** IMPLEMENTADO Y PROBADO EN PR; fusión pendiente de aprobación.
 
 ## Objetivo
 
@@ -28,13 +28,13 @@ Evitar duplicar tareas, transiciones y registros de evidencia tras un error entr
 
 ## QA requerido
 
-- [ ] Persistencia conjunta en Board de tarea y evento por confirmar.
-- [ ] Simulación de fallo antes del append para creación, transición y evidencia.
-- [ ] Reanudación tras reinicio sin repetir la mutación de negocio.
-- [ ] Fallo después de append y antes del acuse, sin duplicar evento.
-- [ ] Tail truncado de JSONL conservado sin corromper el siguiente evento.
-- [ ] Reintento con digest cambiado rechazado, oficina distinta aislada.
-- [ ] Pruebas F1-01/F1-02/F1-03, typecheck, build, full suite, smoke y CI multiplataforma PASS.
+- [x] Persistencia conjunta en Board de tarea y evento por confirmar.
+- [x] Simulación de fallo antes del append para creación, transición y evidencia.
+- [x] Reanudación tras reinicio sin repetir la mutación de negocio.
+- [x] Fallo después de append y antes del acuse, sin duplicar evento.
+- [x] Tail truncado de JSONL conservado sin corromper el siguiente evento.
+- [x] Reintento con digest cambiado rechazado, oficina distinta aislada.
+- [x] Pruebas F1-01/F1-02/F1-03, typecheck, build, full suite, smoke y CI multiplataforma PASS en [run 41894999132](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41894999132).
 - [ ] Diff revisado. PR aprobado por Salva antes de fusionar.
 
 **Rollback:** revertir la capa de F1-04 sin eliminar `taskAuditOutbox` de los Boards de usuarios; conservar historial y respaldos. No desplegar en la Mac productiva en este ticket.
