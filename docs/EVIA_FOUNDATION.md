@@ -1,6 +1,6 @@
 # EVIA Agent Office · Fase de adaptación
 
-Estado: prototipo privado en desarrollo. No se ha desplegado ni certificado para uso con datos de clientes.
+Estado histórico al inicio de la adaptación: prototipo privado en desarrollo. Desde entonces F1-01 a F1-04 fueron fusionados en `main`; no se ha certificado la plataforma para datos de clientes ni acceso remoto.
 
 ## Procedencia y licencia
 
