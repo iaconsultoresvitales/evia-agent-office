@@ -1,14 +1,15 @@
 # EVIA Office OS | F0-02 | Auditoría AS-IS y matriz de capacidades
 
-**Estado:** EN REVISIÓN, pendiente de aceptación por Salvador Villarreal Gómez.  
+**Estado:** BASELINE F0-02 ACEPTADA PARA DISEÑO F0-03, con correcciones factuales abiertas. Autorización de Salva: «vamos, sigamos» (2026-11-04).  
 **Corte de evidencia:** 4 de noviembre de 2026.  
 **Repositorio:** `iaconsultoresvitales/evia-agent-office` (privado).  
 **Línea de código probada:** `5033cfb28529395e28e9e0dd47c6b19bcf7904df`.  
 **Rama de referencia de desarrollo:** `feature/evia-foundation`, consultada en `e1f9cde1191573920b66a2b9372b32409fa4bb6a`.  
 **Propietario de aprobación:** Salva.  
+**Alcance de la aprobación:** continuar el diseño F0-03; no autoriza merge, despliegue ni ejecución sobre cuentas reales.  
 **Regla de verdad:** implementar, probar, revisar, fusionar y desplegar son estados distintos.
 
-> **Dictamen preliminar:** la base de EVIA Office compila y supera una suite automatizada y un smoke test en laboratorio Linux ARM64 sin conexión externa visible. No se ha demostrado un Director IA empresarial, un Task OS basado en contratos, aislamiento completo por cliente, Policy Engine centralizado ni integraciones reales extremo a extremo. **F0-02 no está aceptado hasta la revisión de este documento.**
+> **Dictamen preliminar:** la base de EVIA Office compila y supera una suite automatizada y un smoke test en laboratorio Linux ARM64 sin conexión externa visible. No se ha demostrado un Director IA empresarial, un Task OS basado en contratos, aislamiento completo por cliente, Policy Engine centralizado ni integraciones reales extremo a extremo. **La línea base F0-02 queda aceptada para continuar al diseño por autorización conversacional de Salva; no se afirma revisión detallada de cada celda.**
 
 ## 1. Objetivo y alcance
 
@@ -138,17 +139,17 @@ Fuentes: [`package.json`](https://github.com/iaconsultoresvitales/evia-agent-off
 - [x] Inventario y matriz de capacidades con fuentes y límites.
 - [x] Brechas vinculadas al plan F0-03–F8.
 - [x] Riesgos y decisiones vigentes documentados.
-- [ ] Documento revisado por Salva y aceptado como **baseline AS-IS**.
-- [ ] Comprobación de incorporación documental en la rama de desarrollo correspondiente y estado de revisión registrado.
+- [x] Salva autorizó avanzar a F0-03 sobre esta **baseline AS-IS** («vamos, sigamos», 2026-11-04). La revisión detallada de cada hallazgo no está acreditada.
+- [x] Documento incorporado y verificado en la rama documental `docs/f0-02-as-is-review-20261104`, sin merge a `feature/evia-foundation` ni `main`.
 
-**Regla de cierre:** no declarar F0-02 `ACCEPTED` por el mero hecho de que la suite pase o el archivo exista. Requiere revisión y aceptación del alcance de esta matriz. Una vez aceptado, las brechas alimentan los ADR y contratos de F0-03; no autorizan automáticamente implementar o desplegar.
+**Regla de cierre:** la autorización explícita de continuidad permite declarar la baseline **aceptada para el diseño**, sin afirmar una revisión técnica independiente completa. Cualquier contradicción posterior se corrige con evidencia y revisión versionada. La aceptación no autoriza automáticamente implementar, fusionar o desplegar.
 
 ## 8. Siguientes acciones
 
-1. Revisar esta matriz y corregir únicamente hallazgos factuales o ausencias de evidencia.
-2. Registrar la aceptación o solicitudes de cambio de Salva.
-3. Si es aceptada, actualizar su estado a `ACCEPTED` mediante cambio versionado separado.
-4. Abrir F0-03: ADR de límites de sistemas y orquestación, Task Contract, Agent Contract, Tool Contract y Approval Contract; definir riesgos y pruebas antes del código.
+1. Conservar esta baseline como fuente inicial del diseño y corregir hallazgos factuales cuando surja evidencia.
+2. Registrar la autorización de Salva y mantener separados aprobación documental, implementación, merge y despliegue.
+3. Abrir F0-03: ADR de límites de sistemas y orquestación; diseñar Task, Agent, Tool y Approval Contracts con pruebas antes del código.
+4. Presentar el diseño TO-BE para revisión y decisión de Salva.
 5. Preparar F1 Task OS solo después del diseño aprobado.
 
 ## 9. Referencias primarias de código y documentación
@@ -164,6 +165,6 @@ Fuentes: [`package.json`](https://github.com/iaconsultoresvitales/evia-agent-off
 
 ---
 
-**Resultado del hito:** `EVIDENCIA CONSOLIDADA / EN REVISIÓN`.  
-**Siguiente hito condicionado:** `F0-03`, únicamente tras aceptación humana.  
+**Resultado del hito:** `BASELINE AS-IS ACEPTADA PARA DISEÑO`, con revisión factual abierta.  
+**Siguiente hito:** `F0-03`, diseño autorizado por Salva.  
 **No realizado:** cambios de implementación, pruebas reales de proveedores, merge ni despliegue.
