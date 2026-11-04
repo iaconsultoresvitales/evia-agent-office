@@ -1,11 +1,12 @@
 {
-  "name": "pixel-office",
+  "name": "evia-agent-office",
   "version": "0.1.0",
-  "description": "A pixel-art office for your Claude agents: hire AI employees, give them jobs, teach them things they never forget.",
+  "description": "EVIA Office OS: local-first AI agent office adapted from Pixel Office.",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "pixel-office": "bin/pixel-office.js"
+    "pixel-office": "bin/pixel-office.js",
+    "evia-office": "bin/pixel-office.js"
   },
   "files": [
     "bin",
@@ -44,14 +45,14 @@
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
   },
-  "author": "Basri Ayaz (https://github.com/basriayaz)",
+  "author": "Basri Ayaz (original Pixel Office); Salvador Villarreal Gomez (EVIA adaptation)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/basriayaz/pixel-office.git"
+    "url": "git+https://github.com/iaconsultoresvitales/evia-agent-office.git"
   },
-  "homepage": "https://github.com/basriayaz/pixel-office#readme",
+  "homepage": "https://github.com/iaconsultoresvitales/evia-agent-office#readme",
   "bugs": {
-    "url": "https://github.com/basriayaz/pixel-office/issues"
+    "url": "https://github.com/iaconsultoresvitales/evia-agent-office/issues"
   },
   "keywords": [
     "claude",
