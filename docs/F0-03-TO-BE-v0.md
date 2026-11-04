@@ -1,10 +1,10 @@
 # EVIA Office OS | F0-03 | Diseño TO-BE y contratos v0.1
 
-**Estado:** PROPUESTA PARA REVISIÓN. No son ADR aceptados ni autorización para implementar.  
+**Estado:** DISEÑO F0-03 PARCIALMENTE APROBADO. Salva aprobó expresamente tres decisiones el 4 de noviembre de 2026. Los ADR-F003-01 y 02 son ACCEPTED; los ADR-F003-03 y 04 siguen PROPUESTOS. La aprobación no autoriza merge ni despliegue.  
 **Fecha:** 4 de noviembre de 2026.  
 **Dependencia:** [F0-02 AS-IS](F0-02-AS-IS.md), aceptada como línea base para diseño mediante «vamos, sigamos» de Salva.  
 **Base de código:** commit `5033cfb28529395e28e9e0dd47c6b19bcf7904df`.  
-**Próxima fase, si se aprueba este diseño:** F1, Task OS mínimo.
+**Próximo ticket:** F1-01, contrato versionado y validador, preparado para implementación en rama funcional separada.
 
 > **Principio de arquitectura:** aprovechar el tablero, archivos persistentes, eventos, sesiones y adaptadores ya implementados en Pixel Office. Diseñar una capa mínima de contratos verificables sobre ellos. El Director IA vendrá después de que Task OS pueda gestionar una tarea reproducible con evidencia. No reconstruir la aplicación ni agregar un segundo stack sin una brecha demostrada.
 
@@ -67,12 +67,12 @@ flowchart TD
 
 | ADR | Recomendación | Alternativa considerada | Ventaja | Riesgo o costo | Estado |
 | --- | --- | --- | --- | --- | --- |
-| **ADR-F003-01** Persistencia | Conservar JSON/JSONL y guardado atómico para F1, con cambios compatibles | Introducir SQLite desde F1 | Menos migración y menor tiempo de desarrollo | Las escrituras entre varios archivos no forman una transacción única; diseñar reconciliación | **PROPUESTA** |
-| **ADR-F003-02** Task Contract | Agregar campos opcionales versionados al `Task` actual, con `Task Service` que valide tareas gestionadas | Nueva base de tareas paralela o reemplazar tablero | Una fuente de estado y UI existente reutilizable | Cambiar rutas y eventos exige tests de regresión | **PROPUESTA** |
+| **ADR-F003-01** Persistencia | Conservar JSON/JSONL y guardado atómico para F1, con cambios compatibles | Introducir SQLite desde F1 | Menos migración y menor tiempo de desarrollo | Las escrituras entre varios archivos no forman una transacción única; diseñar reconciliación | **ACCEPTED 2026-11-04** |
+| **ADR-F003-02** Task Contract | Agregar campos opcionales versionados al `Task` actual, con `Task Service` que valide tareas gestionadas | Nueva base de tareas paralela o reemplazar tablero | Una fuente de estado y UI existente reutilizable | Cambiar rutas y eventos exige tests de regresión | **ACCEPTED 2026-11-04** |
 | **ADR-F003-03** Director IA | Orquestador mínimo sobre Task Service con acciones de planificación y delegación trazables | Agente libre que llame directamente cualquier herramienta | Supervisión, QA y reanudación comprobables | Requiere disciplina de contrato por tarea | **PROPUESTA** |
 | **ADR-F003-04** Gobierno | Definir contratos de herramientas/aprobaciones ahora; implementar controles progresivamente en F5 | Integrar conectores de escritura desde F1 | Evita mezclar diseño con credenciales reales | Hay que mantener explícito lo que aún no está protegido | **PROPUESTA** |
 
-**Criterio de decisión:** aprobar estas recomendaciones solo si reducen duplicación, son compatibles con la base existente y facilitan el primer workflow empresarial. No introducir SQLite, colas distribuidas ni OpenShell sin necesidad demostrada.
+**Criterio de decisión:** ADR-F003-01 y ADR-F003-02 quedaron aprobados por Salva el 4 de noviembre de 2026. ADR-F003-03 y ADR-F003-04 mantienen estado propuesto hasta una decisión explícita de alcance. No introducir SQLite, colas distribuidas ni OpenShell sin necesidad demostrada.
 
 ## 5. Contratos mínimos propuestos
 
@@ -229,7 +229,7 @@ Primer workflow a evaluar: **Salva → Director → Task OS → Lauren investiga
 | F0-03-02 | Definir contratos v1 | Task/Agent/Tool/Approval/Evidence schemas aprobados | F0-03-01 | Campos, versiones, límites y ejemplos claros | PROPUESTA |
 | F0-03-03 | Definir transiciones, límites y permisos | Reglas para tareas gestionadas | F0-03-02 | Casos positivos/negativos y no-duplicación definidos | PROPUESTA |
 | F0-03-04 | Acordar F1 mínimo y rollback | Backlog y QA de implementación | F0-03-03 | Plan pequeño, reversible y sin migración destructiva | PROPUESTA |
-| F1-01 | Contrato opcional y validador | Tipo/esquema y pruebas unitarias | F0-03 aceptado | Legacy sigue funcionando; contratos inválidos se rechazan | NO INICIADO |
+| F1-01 | Contrato opcional y validador | Tipo/esquema y pruebas unitarias | ADR-F003-01/02 ACCEPTED y ticket específico | Legacy sigue funcionando; contratos inválidos se rechazan | LISTO PARA IMPLEMENTAR |
 | F1-02 | TaskService y transiciones | Servicio + tests de estados/dependencias | F1-01 | Creación, avance, revisión, bloqueo y recuperación PASS | NO INICIADO |
 | F1-03 | Evidencia y eventos | Referencias correlacionadas con tarea/run | F1-02 | Un cierre empresarial exige evidencia; logs coherentes | NO INICIADO |
 | F1-04 | Reanudación y compatibilidad | Pruebas de reinicio, datos anteriores y rollback | F1-03 | Sin pérdida de datos y sin doble ejecución | NO INICIADO |
@@ -254,13 +254,19 @@ Primer workflow a evaluar: **Salva → Director → Task OS → Lauren investiga
 | Permisos heterogéneos por proveedor | Política por contrato; sin escrituras reales antes de Tool Gateway | F5/F6 |
 | Sobrecoste de controles de laboratorio | Evitar OpenShell/harness avanzado hasta evidencia de necesidad | Pospuesto |
 
-## 11. Decisiones para Salva (máximo tres)
+## 11. Registro de decisiones del 4 de noviembre de 2026
 
-1. **Persistencia F1:** ¿confirmamos reutilizar JSON/JSONL y Board como línea de evolución, sin SQLite ahora? **Recomendación: sí.**
-2. **Task Contract mínimo:** ¿confirmamos el contrato opcional versionado y las transiciones de tarea gestionada, manteniendo las tareas legadas? **Recomendación: sí.**
-3. **Primer caso de aceptación:** ¿usamos investigación competitiva con datos ficticios y salida revisada por QA, sin conectores de escritura? **Recomendación: sí.**
+Salva respondió **«Aprobadas las tres»** a las siguientes propuestas explícitas:
 
-Si se aprueban, se registran los ADR aceptados en un commit documental y se puede preparar F1-01. **La aprobación del diseño no equivale a autorización para usar cuentas reales, hacer merge o desplegar.**
+| Registro | Decisión | Estado | Alcance |
+| --- | --- | --- | --- |
+| **ADR-F003-01** | Reutilizar JSON/JSONL y el tablero existente; no introducir SQLite ahora | **ACCEPTED** | Persistencia de F1 |
+| **ADR-F003-02** | Añadir Task Contract versionado y compatible con las tareas anteriores | **ACCEPTED** | F1-01 y F1-02 |
+| **DEC-F003-05** | Primer caso de prueba: investigación competitiva con datos ficticios, entregable verificable y sin escrituras externas | **ACCEPTED** | Criterio de piloto, no habilitación de proveedores |
+
+**No aprobados todavía:** ADR-F003-03 (comportamiento concreto del Director IA) y ADR-F003-04 (gobierno progresivo de herramientas). Permanecen como propuestas para diseño posterior; no bloquean la preparación del ticket F1-01, que solo requiere los dos primeros ADR.
+
+**Efecto inmediato:** preparar la especificación F1-01 y una rama de implementación separada cuando se autorice. No se deben introducir cambios funcionales dentro de esta rama documental.
 
 ## 12. Evidencia del diseño
 
@@ -273,7 +279,7 @@ Si se aprueban, se registran los ADR aceptados en un commit documental y se pued
 
 ---
 
-**Estado del documento:** `F0-03 PROPUESTA v0.1`.  
-**Estado de ADR:** cuatro decisiones propuestas, ninguna aprobada formalmente.  
-**Próximo acto de decisión:** Salva confirma o ajusta las tres decisiones de la sección 11.  
+**Estado del documento:** `F0-03 DISEÑO EN CURSO v0.1`, decisiones parciales aprobadas.  
+**Estado de ADR:** `ADR-F003-01` y `ADR-F003-02` ACCEPTED; `ADR-F003-03` y `ADR-F003-04` PROPUESTOS.  
+**Próximo paso:** ticket F1-01 preparado para implementación; validar resultado con pruebas.  
 **Fuera de alcance en este cambio:** código de producción, APIs reales, credenciales, PR, merge y despliegue.
