@@ -2,7 +2,7 @@
 
 **Proyecto:** EVIA Office OS  
 **Fase:** F1, primer incremento funcional del Task OS.  
-**Estado:** IMPLEMENTADO, PROBADO, REVISADO y FUSIONADO en `feature/evia-foundation`; no desplegado ni fusionado en `main`.  
+**Estado vigente (actualización 2026-11-04):** IMPLEMENTADO, PROBADO, REVISADO y FUSIONADO en `main` mediante [PR #1](https://github.com/iaconsultoresvitales/evia-agent-office/pull/1), commit `0d01e2efa5279693e004d75b42a6c739d3bfc302`; NO DESPLEGADO en la Mac operativa. La integración inicial de F1-01 en `feature/evia-foundation` fue el estado histórico de este documento antes de PR #1.
 **Fecha de preparación:** 4 de noviembre de 2026.  
 **Decisiones habilitantes:** `ADR-F003-01` y `ADR-F003-02`, ACCEPTED por Salva; `DEC-F003-05` para el caso de prueba.  
 **Código de referencia:** `feature/evia-foundation`, cuya línea de ejecución fue probada en el commit `5033cfb28529395e28e9e0dd47c6b19bcf7904df`.
@@ -157,6 +157,6 @@ Si una decisión afecta estructura persistente de manera irreversible, detén el
 **REVISADO:** Salva autorizó integrar el PR #5.  
 **FUSIONADO:** sí, solo en `feature/evia-foundation`, commit `baeda63b4ca3e8736127a23ea4af3a089b053323`.  
 **QA de integración para `main`:** [CI #22](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41883580378), 6/6 PASS y `npm test` PASS en el commit reconciliado `98b13ab85a8cba159a2930e8cdcf06831fdef749`.  
-**EN MAIN / DESPLEGADO:** no; requieren autorización explícita posterior.
+**EN MAIN / DESPLEGADO (registro histórico al redactar F1-01):** no. **Actualización postmerge:** F1-01 sí quedó en `main` mediante PR #1; no se acredita despliegue.
 
 **Siguiente ticket tras aceptación:** `F1-02`, Task Service y máquina de estados. La autorización para F1-01 no autoriza implícitamente F1-02.
