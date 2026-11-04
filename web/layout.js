@@ -447,11 +447,16 @@
     if (items.filter((x) => x.type === "desk").length - 1 < Math.min(ids.length, MAX_EMP)) return { ok: false, reason: "lastDesk" };
     return { ok: true };
   }
-  function rotate(it) {
-    const T = TYPES[it.type];
-    if (!T || !T.dirs) return it;
-    const cur = it.dir || DEFAULT_DIR[it.type];
-    return { ...it, dir: T.dirs[(T.dirs.indexOf(cur) + 1) % T.dirs.length] };
+  // Which pieces turn: only those whose type lists `dirs` (each one has a drawing / a valid seat for every listed direction). A piece without
+  // `dirs` is never given a `dir`, and sanitize() drops one that arrives with it. Adding a direction to a type = a sprite and a geometry for it.
+  const canRotate = (type) => hasOwn(TYPES, type) && Array.isArray(TYPES[type].dirs) && TYPES[type].dirs.length > 1;
+  const orientations = (type) => (canRotate(type) ? TYPES[type].dirs.slice() : []);
+  const rotatableTypes = () => TYPE_ORDER.filter(canRotate);
+  // The piece turned one step (step -1 = the other way round); the same piece when it does not turn.
+  function rotate(it, step = 1) {
+    if (!canRotate(it.type)) return it;
+    const dirs = TYPES[it.type].dirs, cur = dirs.includes(it.dir) ? it.dir : DEFAULT_DIR[it.type];
+    return { ...it, dir: dirs[(dirs.indexOf(cur) + (step < 0 ? -1 : 1) + dirs.length) % dirs.length] };
   }
   // closest walkable tile to `from`; used to rescue somebody standing where a piece has just been dropped
   function nearestFree(b, from, taken = new Set()) {
@@ -476,6 +481,6 @@
     COLS, ROWS, MAX_EMP, MAX_ITEMS, MAX_DESKS, ENTRANCE, ROOMS, DOORS, DOOR_GROUPS, FIXED_SPOTS, WALLS, TYPES, TYPE_ORDER, DEFAULT_DIR,
     THEMES, WALL, RUG, PROGRESS_ORDER, WINDOW_TILES, isWall, wallOrder, wallOf, defaultWall, defaultRug, progressWall, withDecor,
     key, defaultItems, deskLayout, autoDesks, build, check, sanitize, toDoc, clone, assignDesks, ensureDesks, findPlace, nextId, scene,
-    canDelete, rotate, repair, nearestFree, tilesOf, floorTiles, isFloor: (x, y) => floor.has(key(x, y)),
+    canDelete, rotate, canRotate, orientations, rotatableTypes, repair, nearestFree, tilesOf, floorTiles, isFloor: (x, y) => floor.has(key(x, y)),
   };
 })();
