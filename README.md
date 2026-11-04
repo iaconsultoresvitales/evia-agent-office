@@ -1,317 +1,94 @@
-> **EVIA Agent Office · adaptación privada en desarrollo**
->
-> Esta rama agrega localización inicial en español, perfiles EVIA y una línea base de seguridad. Para configuración y alcance, consulta [EVIA Foundation](docs/EVIA_FOUNDATION.md), [seguridad](docs/EVIA_SECURITY.md) y [roles](evia/roles/README.md).
->
-> Proyecto derivado de Pixel Office de Basri Ayaz. Conservamos la licencia MIT, los avisos de atribución y el historial de origen. La documentación original se mantiene a continuación. **No desplegar ni conectar datos de clientes todavía.**
+# EVIA Office
 
----
+**Oficina virtual de agentes de inteligencia artificial para Estrategias Vitales IA (EVIA).**
 
-<div align="center">
+**Dirección y adaptación:** Salvador Villarreal Gómez, fundador de EVIA y Fractional Chief AI Officer.
 
-# Pixel Office
+> **Estado:** prototipo privado en desarrollo, de uso local en macOS. No hay despliegue público ni autorización general para procesar información sensible de clientes.
 
-**Run a company of AI agents from a pixel-art office.**
+<!-- Las capturas de la instancia EVIA se incorporarán antes de fusionar este README. -->
 
-Hire employees in a character creator, give them real jobs, watch them walk to their desks and work,<br>
-let them talk to each other, then spend what they earn redecorating the place.
+## Propósito
 
-[![GitHub stars](https://img.shields.io/github/stars/basriayaz/pixel-office?style=flat&logo=github&color=f5c542)](https://github.com/basriayaz/pixel-office/stargazers) [![MIT license](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE) [![Node 20+](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](#quick-start) [![Claude · Codex · Gemini · OpenRouter](https://img.shields.io/badge/engines-Claude%20·%20Codex%20·%20Gemini%20·%20OpenRouter-8a63d2.svg)](#quick-start) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
+EVIA Office busca convertirse en el centro de operaciones de los proyectos profesionales de EVIA. Reúne agentes especializados con instrucciones, memoria, herramientas, tareas y permisos definidos para facilitar investigación, coordinación, desarrollo y seguimiento, siempre bajo supervisión humana.
 
-*Türkçe: [README.tr.md](README.tr.md)*
+La visión incluye un agente director que distribuya trabajo entre especialistas y mantenga separados los proyectos y datos de cada cliente. **Esta coordinación integral es una meta de arquitectura, no una capacidad ya terminada.**
 
-![Pixel Office — employees working, chatting and celebrating a finished task](docs/office.gif)
+## Qué funciona hoy
 
-```bash
-npx github:basriayaz/pixel-office
-```
+En la versión local de desarrollo:
 
-**One command, opens in your browser.** Your agents, your machine, your API keys.
+- Oficina visual 2D con agentes y espacios de trabajo.
+- Perfiles, conversaciones, memoria e historial por agente.
+- Tablero de tareas, notas compartidas y colaboración entre agentes.
+- Configuración de modelos, permisos y directorios de trabajo.
+- Copia de respuestas de los agentes y rotación de muebles compatibles.
+- Personalización de la oficina y mercado de mobiliario.
+- Ejecución local con archivos persistentes y respaldos separados del repositorio.
 
-</div>
+Los motores y conectores disponibles dependen de la instalación, autenticación y permisos de cada proveedor. Su presencia en la interfaz **no significa** que estén conectados o autorizados.
 
-Most agent tools are a chat box. Pixel Office is a place: every employee is a real AI agent (Claude, Codex, Gemini or OpenRouter) with its own job description, memory, skills, model and permission level, working in the folder you give it, and you can see at a glance who is working, who needs your permission and who is done. Between tasks they wander to the kitchen, chat at their desks and laugh at each other's jokes.
+## Alcance y próximos pasos
 
-| | |
-|:---:|:---:|
-| **🧑‍🎨 Hire in a character creator**<br>14 hair styles, beards, hats, outfits, shoes; 34 ready-made positions from Backend Developer to Copywriter | **💬 Employees talk to each other**<br>Idle chatter at their desks, and real hand-offs: one agent messages a colleague, waits for the answer and reports back |
-| [![Character creator](docs/hire.jpg)](#hiring) | [![Colleagues chatting at their desks](docs/colleagues.jpg)](#colleagues) |
-| **✏️ Design your own office**<br>Drag furniture around, rotate, copy, undo, compare with the saved layout. Doors and desks are kept reachable | **🛒 The Market**<br>154 furniture, decor and wall pieces from every theme. Finished work earns coins; try a piece in the office before you pay |
-| [![Layout editor](docs/layout-editor.jpg)](#design-your-office) | [![Furniture Market](docs/market.jpg)](#the-market-and-coins) |
-| **🔌 151 integrations, one click each**<br>GitHub, Notion, Linear, Stripe, Supabase, Gmail, Drive, Canva and more. Sign in with your account; employees never see a credential | **🧩 82 ready-made skills**<br>From Anthropic, Vercel, Supabase, Stripe, Hugging Face and others, pinned to a commit and previewed before install |
-| [![Integration Market](docs/integrations.jpg)](#integration-market) | [![Skill Market](docs/skills.jpg)](#skill-market) |
-| **📋 A board and a project manager**<br>Tasks with owners, review before done, a shared notebook, an idea box. Run the office by hand, in approved rounds, or on its own | **🧠 Teach once, remember forever**<br>Say "remember that…" and it goes into a Markdown memory file loaded every session. Open it and edit it yourself |
-| [![Board](docs/board.jpg)](#board-and-project-manager) | [![Memory tab](docs/memory.jpg)](#chat-permissions-memory) |
-
-Plus: **meetings** in the meeting room with raised hands and a written summary, **several offices** on one server (one per company or team), **eight themes** (classic, football club, fashion atelier, gothic manor, music studio, travel agency, dream studio, cheese dairy), **English and Turkish** UI, macOS, Linux and Windows.
-
-> ⭐ **If an office full of tiny agents made you smile, [give it a star](https://github.com/basriayaz/pixel-office/stargazers).** It is the main way other people find the project.
-
-## Quick start
-
-Requirements: **Node.js 20+** (`node --version`) and access to **one** provider below. Install Git for the GitHub-based install command.
-
-```bash
-npx github:basriayaz/pixel-office
-```
-
-On a fresh global setup, this creates `~/.pixel-office/`, hires three sample employees and opens http://localhost:4747. If the browser does not open, visit that address. Opening the office is the first step; connect a provider before sending a task.
-
-1. **Connect a provider:** open **⚙ Settings → Models**. Use the matching card below, leave **Use this engine** checked, then click **Check again** and look for **Connected**.
-
-   | Provider | Setup in its card |
-   |---|---|
-   | Claude | **Install** if missing, then **Sign in** to Claude Code; alternatively start the server with `ANTHROPIC_API_KEY` in its environment. |
-   | Codex | **Install** if missing, then **Sign in** to the Codex CLI. |
-   | Gemini | **Install** the Gemini CLI if missing; enter your Gemini API key and click **Save key** (or start with `GEMINI_API_KEY` / `GOOGLE_API_KEY`). |
-   | OpenRouter | Enter your OpenRouter API key and click **Save key** (or start with `OPENROUTER_API_KEY`). Add a tool-capable model's OpenRouter id under **Extra model ids** and click **Save models**. No separate CLI installation is needed. |
-
-   Select an employee, open their profile (**☰ → Settings**), choose a model from the connected provider and save. Connecting a provider does not change an existing employee's model automatically.
-
-2. **Choose the working folder:** open **⚙ Settings → Offices**, find your office's row, enter your project's absolute path in its folder field and click **Save**. **Global mode defaults to your home folder, even when you launch the command from a project folder.** An employee's own working-folder setting overrides the office setting; check it in their profile. For project mode, see [Where files live](#where-files-live).
-
-3. **Send one small request** in that employee's chat:
-
-   > Show the absolute path of your working directory and list up to five entries directly inside it. Do not change any files.
-
-   **Expected result:** a chat reply containing the project path you selected and entries you recognize (or a note that the folder is empty). If a permission card appears, review and allow the directory-reading action to continue.
-
-If the request fails or waits: **Settings → Models** first (read the card's error, finish installation/sign-in or correct the key, then **Check again**) → **employee profile → Settings** (select a model from that provider and save) → **Settings → Offices** and the employee's folder override (confirm the path). Check the chat for a pending permission request, then resend the example. A **Connected** badge checks provider status; the example reply confirms an actual agent turn works. If the panel cannot start sign-in, use `claude auth login` or `codex login` in a terminal, then **Check again**.
-
-To install the command permanently:
-
-```bash
-git clone https://github.com/basriayaz/pixel-office.git
-cd pixel-office && npm install && npm link
-pixel-office          # start
-pixel-office stop     # stop (or the ⏻ button in the top bar, or Ctrl+C)
-```
-
-Works on macOS, Linux and Windows (PowerShell). Switch the language any time from the 🌐 menu in the top bar (the first run picks your OS language). English and Turkish ship today, [add yours](#contributing).
-
-## A tour
-
-### Chat, permissions, memory
-
-Click an employee to open their chat. Replies stream in as Markdown; paste a screenshot with Ctrl+V (or drop an image file) and it goes along with your message; tool calls are collapsed into "N actions" rows; permission handling depends on the provider and selected mode. Claude and OpenRouter can show permission cards — **Allow**, **Always allow** when available, or **Deny** — and multiple-choice questions. Codex and Gemini run without interactive permission cards; their modes set what they may do (see [Permissions](#permissions)).
-
-![Permission request in the chat](docs/chat-permission.jpg)
-
-Tell an employee something worth keeping ("remember that our weekly report goes out on Fridays") and they write it to their memory file, then carry on with the task:
-
-![Reply with memory updated](docs/chat.jpg)
-
-The memory file is plain Markdown. Open the profile (☰ in the chat header) to read or edit it, add skills, change the model, or fire the employee:
-
-![Memory tab on the profile page](docs/memory.jpg)
-
-### Meetings
-
-**👥 Meeting** in the top bar calls a meeting: pick a topic and who joins (busy people either finish first or are interrupted). Everybody walks to the meeting room and the chat panel becomes the meeting panel. What you write goes to the whole room; each employee answers in up to three sentences or passes, and hears what the others said with the next round. `@name` addresses one person (click a name to insert it). Someone with more to say raises a hand — ✋ over their head and a card in the panel — and **Give the floor** lets them speak at length. **End** writes a summary with decisions and follow-up tasks; each task has a **Send** button that hands it to its owner, the summary lands in every participant's chat and, if you leave the box ticked, in their memory. Every message runs one turn per participant, so a big room costs accordingly. Past meetings stay under 🕘.
-
-### Board and project manager
-
-**📋 Board** holds two things every employee of the office shares. The **shared notebook** is where they write down what matters beyond one chat (findings, decisions, numbers, risks) and read what colleagues found before starting their own work; you can add, edit and delete notes too. The **task list** is a plan: you and the project manager put tasks on it with an owner, and nothing starts by itself. Press **Start** on a task, pick a person and press **Start their open tasks**, or tell them in chat to do their open tasks on the board. Owners mark each task in progress, done (with a short result note) or blocked (with the reason); blocked and in-review tasks show as a badge on the button.
-
-Make one employee the **project manager** (profile → Settings → Project manager). They can read the whole notebook, see what a colleague has recently been doing without interrupting them, put tasks on the board and start them once you give the go-ahead. The natural loop: everybody researches their area and saves notes → you ask the project manager where things stand, what is missing and what to do next → they propose tasks with clear owners and scopes so work does not collide → you say go → owners work and tick their tasks off. No polling runs in the background: the project manager only costs a turn when you talk to them.
-
-![Board with blocked, in-review and running tasks](docs/board.jpg)
-
-Keeping order: tick **Needs review** on a task (or let the project manager set it) and the owner cannot close it — finished work waits in review until you or the project manager **Approve** it or **Send back**. The board flags tasks whose owner is waiting for your permission, hit a session error, stopped working or left the office, and the 📋 button counts them. Meeting follow-ups are added to the board rather than started. Notes are given to employees as information, never as instructions, and near-duplicate notes are caught when they are saved.
-
-For developers working on the same repository at the same time, tick **Own working copy** on their profile: each gets a private git worktree in `.pixel-office/worktrees/<id>` on branch `po/<id>`, commits there, and names the branch in the task's result note. Merging into the main branch is yours (or the project manager's, when you ask). The folder must be a git repository with at least one commit; switching it on starts that employee's chat on a fresh session.
-
-### Hiring
-
-**+ Hire** opens a character creator: gender, body type, skin, eye color, 14 hair styles (from bald and balding to mohawk, afro and braid), beards (stubble, mustache, goatee, circle, full, long) with their own color, glasses, headset, hats (cap, beanie, cowboy, fedora, bucket, beret, bandana, hood), tops (t-shirt, tank top, crop top, polo, shirt, sweater, hoodie, blazer, suit with tie, dress), bottoms (pants, cargo, joggers, shorts, long shorts, skirt, long skirt), shoes (classic, sneakers, high-tops, boots, loafers, sandals, heels) with their own color. Pick one of the ready-made positions or write your own job description, choose model / effort / permission mode, hire. The new colleague walks in through the door with confetti and gets a desk of their own (up to 16 desks per office; a new one is added to the layout where it fits).
-
-![Hire page](docs/hire.jpg)
-
-Ready-made positions (each comes with a job description you can edit): Personal Assistant, Accounting & Finance, Marketing & Ads, Customer Support, SEO & Content, Software Developer, Sales, Content & Social Media, Manager / Team Lead, Marketing Manager, Human Resources, Project Manager, Product Manager, Data Analyst, UI/UX Designer, Legal & Compliance, Operations, Mobile Developer, Frontend Developer, Backend Developer, DevOps Engineer, QA Engineer, AI / ML Engineer, Data Engineer, Graphic Designer, Market & Competitor Analyst, Business Analyst, Business Development, Growth Manager, Strategy Consultant, PR & Communications, Community Manager, Copywriter, E-commerce Manager.
-
-<a id="colleagues"></a>
-### Colleagues talk to each other
-
-The office is never still. Idle employees pair up for a chat at their desks or by the coffee machine, crack a joke and laugh (six different laughs), stretch, yawn, doze off, and walk over to pat a colleague on the shoulder when their task fails.
-
-![Colleagues chatting at their desks](docs/colleagues.jpg)
-
-The talking is real, too. Every employee has two office tools, `list_colleagues` and `message_colleague`: a support agent hands an order cancellation to the person who owns orders, waits for the answer and reports back to you. The message shows in both chats, and a message that arrives while someone is busy waits for their turn to end instead of interrupting it. In a [meeting](#meetings), the whole room hears what each person said.
-
-<a id="design-your-office"></a>
-### Design your office
-
-**🧰 Tools → ✏️ Edit layout** turns the office into an editor. Drag any piece to move it (a green ghost where it fits, red where it does not), **R** rotates (**Shift+R** the other way, or the **Rotate** button; works while you hold a new piece, after placing it and while dragging. Only stools and meeting chairs turn: an arrow marks them in the editor, any other piece says it has a single orientation), **Ctrl+D** copies, **Del** puts it in the depot, **Ctrl+Z** undoes, and holding **C** shows the saved office for a before/after comparison. Wall decor moves too. The editor refuses layouts that would block a door, seal the entrance or leave an employee without a desk, so the office always stays walkable. **Save** keeps it per office (`layout.json`), **Back to default** starts over.
-
-![Layout editor with the depot](docs/layout-editor.jpg)
-
-<a id="the-market-and-coins"></a>
-### The Market and coins
-
-Finished work pays: **20 coins** for a task, 12 for a research-only task, and a bonus for 3, 5 and 10 tasks done in one day. **🧰 Tools → 🛒 Market** is a full-screen furniture shop with 154 pieces from every theme (kitchen, office, lounge, decor, wall), a "today's star", daily deals and legendary pieces. **Try it in the office** places a piece first and only then asks for coins; bought pieces wait in the depot, and anything can be sold back for 80% of its price.
-
-![The Market](docs/market.jpg)
-
-<a id="integration-market"></a>
-### Integration Market
-
-**🧰 Tools → 🔌 Integrations** lists 151 remote MCP servers with logos, categories and search: GitHub, Notion, Linear, Atlassian, Sentry, Vercel, Supabase, Stripe, Canva, Zapier, Gmail, Google Drive, Calendar and many more. Connect one by **signing in with your account** (OAuth, handled by the office), pasting a key, or without signing in, then choose who gets it in the *who has what* matrix. Employees never hold a credential: their sessions go through a local gateway that adds it, renews expired tokens and, in read-only mode, refuses every tool that could change something. An employee can also be allowed to use your own Chrome through Claude in Chrome (profile → Settings).
-
-![Integration Market](docs/integrations.jpg)
-
-<a id="skill-market"></a>
-### Skill Market
-
-**🧰 Tools → 🧩 Skills** holds 82 ready-made skills published by Anthropic, Vercel, Supabase, Stripe, Cloudflare, Sentry, Hugging Face, Superpowers, OpenAI and others. Install one on the employees you pick or on everyone. Every skill is pinned to a commit, a preview shows each file with risky patterns marked, a skill can never grant itself permissions, and nothing runs at install time.
-
-![Skill Market](docs/skills.jpg)
-
-### Offices and themes
-
-The ⚙ button next to the office tabs manages offices: add one per company or team (name, working folder chosen with a native folder dialog, theme), rename, change theme, delete when empty. Themes are picked from rendered previews:
-
-![Theme picker](docs/themes.jpg)
-
-## How it works
-
-Each employee is a folder:
-
-```
-~/.pixel-office/
-  config.json
-  employees/
-    _template/
-    alex/
-      agent.md        # identity + job description (YAML frontmatter + system prompt)
-      memory.md       # persistent memory — the employee writes here, you can edit it too
-      skills/
-        weekly-report/SKILL.md
-  data/               # sessions and chat history
-```
-
-**`agent.md`** — frontmatter holds `name`, `role`, `color`, `hired`, `model`, `effort`, `permissionMode`, `cwd`, `tools`, `refreshHours` and the `look` (JSON); the body is the system prompt. Edit the file or use the profile page, both work.
-
-**`memory.md`** — loaded into the system prompt at the start of every session. Every employee is instructed to append durable lessons after each task (rules, preferences, where things live). When idle, and `refreshHours` (default 24) have passed since their last refresh, they re-read their memory and the project docs and tidy them up. **Refresh knowledge** on the profile triggers it by hand. Reset a chat (⟲) and the memory stays.
-
-**`skills/<name>/SKILL.md`** — Claude Code skills loaded only for that employee (a checklist, a report format, a deployment procedure). Managed from the profile's Skills tab.
-
-**Sessions** — Claude chats use the Claude Agent SDK; OpenRouter uses the same SDK with OpenRouter’s Anthropic-compatible endpoint. Codex runs `codex exec` once per turn and resumes by thread ID; Gemini runs its CLI once per turn and resumes by session ID. The server saves chat session/thread IDs and uses them to resume after a restart; this does not keep a running turn alive. If a saved session is missing, a new one starts with a recap. ■ interrupts the current turn; the chat header shows the model and recorded session cost (see Token prices below).
-
-**Token prices** — Codex and Gemini report tokens, not money, so their cost is estimated from a built-in price table (USD per 1M tokens; for Codex on a ChatGPT plan it is the API-equivalent, nothing is billed). When a provider changes prices or ships a new model, put your own rows in `<dataDir>/prices.json` — e.g. `{"codex": [{"match": "gpt-6", "input": 2, "cached": 0.2, "output": 16}], "gemini": []}`; `match` is a case-insensitive regex on the model id, your rows are tried before the built-in ones, `cached` defaults to `input`. The file is picked up without a restart; `GET/PUT /api/prices` read and write it (PUT replaces the rows of the engines it names, 400 on a bad row).
-
-<a id="permissions"></a>
-**Permissions** — the same profile setting maps to different behavior for each provider:
-
-| Provider | `default` | `acceptEdits` | `plan` | `bypassPermissions` |
-| --- | --- | --- | --- | --- |
-| Claude | SDK permission checks; asks when an action needs approval under the current rules | SDK auto-approves file edits; other actions still follow permission rules | SDK planning mode | Skips SDK permission checks |
-| OpenRouter | Same SDK permission flow as Claude | Same as Claude | Same as Claude | Same as Claude |
-| Codex | `workspace-write` sandbox | Same as `default` | `read-only` sandbox | Bypasses approvals and sandbox |
-| Gemini | `auto_edit`: automatically approves edits; actions still requiring confirmation are refused | Same as `default` | CLI `plan` mode | CLI `yolo` mode: automatically approves actions |
-
-Claude/OpenRouter permission cards appear only when the SDK requests approval; allowed tools and existing rules can avoid a prompt. **Always allow** is offered only when the SDK supplies a reusable permission rule, which the server passes back to the SDK with its supplied scope. Codex and Gemini cannot pause for approval in this integration. Codex’s `workspace-write` mode permits writes in the workspace and employee directory, with network access enabled. Office tools are pre-approved for all four providers. Use `bypassPermissions` only for narrowly scoped, trusted employees.
-
-**Colleagues** — employees in the same office can talk to each other through two built-in tools, `list_colleagues` and `message_colleague`. A support employee can hand an order cancellation to the person who owns orders, optionally wait for their answer and report back to you. The message appears in both chats.
-
-**Notifications** — 🔔 in the top bar turns on desktop notifications for replies and permission requests while the tab is in the background. Clicking one opens that chat.
-
-**Terminal** — employees are also mirrored into `<working folder>/.claude/agents/<id>.md`, so a plain `claude` session in the same project can delegate to them as subagents. They share the same memory files.
-
-## Where files live
-
-Two modes, chosen automatically:
-
-| mode | when | files | employees work in |
-|---|---|---|---|
-| **global** (default) | run `pixel-office` anywhere | `~/.pixel-office/` (or `$PIXEL_OFFICE_HOME`) | your home folder, unless the office or employee sets a working folder |
-| **project** | the current folder has `.pixel-office/config.json` (created by `pixel-office init`), or `--dir <project>` | `<project>/.pixel-office/` | the project folder |
-
-Project mode is for teams: commit `.pixel-office/employees/` and your colleagues get the same employees (and what they've learned) with the repo. Keep memories private with `pixel-office init --no-memory-git`.
-
-### `config.json`
-
-| key | default | meaning |
-|---|---|---|
-| `locale` | `"en"` | UI + prompt language (`en`, `tr`) |
-| `port` | `4747` | HTTP port (`PORT` env overrides) |
-| `host` | `"127.0.0.1"` | bind address — keep it on localhost, employees can run commands on your machine |
-| `employeesDir` | `employees` / `.pixel-office/employees` | where employee folders live |
-| `dataDir` | `data` / `.pixel-office/data` | sessions, chat history, refresh timestamps |
-| `memoryFile` | `"memory.md"` | memory file name inside each employee folder |
-| `cwd` | home / project | default working folder for employees |
-| `syncClaudeAgents` | `true` | mirror employees into `<cwd>/.claude/agents/` |
-| `refreshHours` | `24` | how often idle employees revisit their memory and project docs |
-| `sickness` | `true` | now and then an idle employee catches a cold and rests on the sofa for 3–5 minutes; messages wait, the 💊 button sends them back early |
-| `offices` | – | list of offices (see below); omit for a single office |
-
-Paths are relative to the folder that holds `config.json` (global) or to the project (project mode); `~` works everywhere.
-
-```json
-{
-  "locale": "en",
-  "offices": [
-    { "id": "core", "name": "Core",       "employeesDir": "employees/core", "theme": "default" },
-    { "id": "shop", "name": "Web Shop",   "employeesDir": "employees/shop", "cwd": "~/Projects/shop", "theme": "fashion" },
-    { "id": "app",  "name": "Mobile App", "employeesDir": "employees/app",  "cwd": "~/Projects/app",  "theme": "music",
-      "employees": ["employees/core/alex"] }
-  ]
-}
-```
-
-`employees` lists extra employee folders to show in that office too — the same person (same memory and skills) working in two offices, each with its own chat.
-
-### CLI
-
-```
-pixel-office                      start your office and open the browser
-pixel-office stop                 stop it
-pixel-office init [--locale tr]   keep employees inside THIS project instead (.pixel-office/)
-pixel-office --dir <project>      start the office of a specific project
-options: --port 4747  --no-open  --global  --no-memory-git (with init)
-env:     PORT, PIXEL_OFFICE_HOME, PIXEL_OFFICE_LOCALE (first run), PIXEL_OFFICE_SAMPLES=0 (no sample employees)
-```
-
-## Troubleshooting
-
-- **"Claude Code is not logged in" / auth errors** — run `claude` once in a terminal and log in, or export `ANTHROPIC_API_KEY`. The Agent SDK bundles the Claude Code runtime; nothing else to install.
-- **Port already in use** — `pixel-office --port 4848`, or `pixel-office stop` if an old instance is still running.
-- **The employee just sits there** — check the chat: they are probably waiting for a permission. Turn on 🔔 to get notified.
-- **Windows** — use PowerShell or Windows Terminal; the folder picker uses the native Windows dialog. Paths like `~/Projects/x` are expanded to your user profile.
-- **Reset everything** — stop the server and delete `~/.pixel-office/` (or `.pixel-office/` in the project).
-
-## Security notes
-
-Employees use Claude, Codex, Gemini or OpenRouter and can access files and run shell commands according to the selected engine and permission mode (see [Permissions](#permissions)). The working folder is not a universal security boundary. The server binds to `127.0.0.1` by default and has no login authentication; do not expose it to a network. Use `bypassPermissions` only for narrowly scoped, trusted employees; it skips approval prompts and, for Codex, also disables the sandbox.
-
-Chat history and memories are stored as plain files on your disk. Local storage does not mean local-only processing: messages, employee instructions and memory, conversation context, and any file contents, images or tool results included in model context are sent through the selected provider's route:
-
-| Provider | Model request route |
+| Estado | Capacidad |
 | --- | --- |
-| Claude | Claude Agent SDK (Claude Code) → Anthropic. |
-| Codex | `codex exec` CLI → OpenAI. |
-| Gemini | Gemini CLI with the configured Gemini API key → Google. |
-| OpenRouter | Claude Agent SDK → OpenRouter's Anthropic-compatible API (`https://openrouter.ai/api`) → the model provider selected by OpenRouter's routing. Using the Claude SDK does not make this an Anthropic-only route. |
+| En uso local | Oficina EVIA, perfiles de agentes, memoria, tareas y personalización |
+| En evaluación | Gobernanza de permisos, evidencia de resultados y presupuestos por agente |
+| Planeado | Agente director y coordinación de múltiples proyectos |
+| Por integrar y validar | Gmail, Google Calendar, Drive, WhatsApp Business y otras herramientas empresariales |
+| Por investigar | Continuidad de contexto entre ChatGPT, Claude Code y Codex, según interfaces oficiales y autorizaciones disponibles |
 
-These are the application's provider routes; custom runtime or environment settings can affect endpoints. Tools, shell commands and configured MCP servers/connectors may contact other services too. Data handling depends on the services involved and your account settings; Pixel Office does not guarantee that data stays on your machine or goes only to Anthropic.
+No se promete sincronización automática de conversaciones de cuentas personales ni control universal de sus aplicaciones.
 
-## Contributing
+## Instalación local de referencia
 
-Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Adding a language is a single file: copy `locales/en.json` to `locales/<code>.json`, translate, and set `"locale": "<code>"`. New themes and props live in `web/office.js`; `web/sprites.html` renders every character frame at 4× while you tweak sprites.
+**Requisitos:** macOS, Node.js 20 o superior, Git y acceso autorizado a los proveedores de IA que se quieran utilizar.
 
-```bash
-npm run dev          # tsx, no build step
-npm run typecheck
-```
+En la instalación de EVIA, el código y los datos viven en carpetas distintas:
 
-## Credits
+| Carpeta | Función |
+| --- | --- |
+| `~/EVIA/agent-office/code/` | Repositorio Git y aplicación |
+| `~/EVIA/agent-office/workspace/.pixel-office/` | Agentes, memoria, conversaciones, configuración y datos |
+| `~/EVIA/agent-office/backups/` | Respaldos locales |
 
-Made by [Basri Ayaz](https://github.com/basriayaz). Built on the [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk). MIT licensed — see [LICENSE](LICENSE).
+Para iniciar la oficina desde Terminal:
+
+~~~bash
+node "$HOME/EVIA/agent-office/code/bin/pixel-office.js" --dir "$HOME/EVIA/agent-office/workspace" --port 4747
+~~~
+
+Abrir [http://127.0.0.1:4747](http://127.0.0.1:4747). La instalación de EVIA también dispone de un acceso directo local. No se deben publicar ni añadir al repositorio los archivos persistentes, credenciales o datos de clientes.
+
+## Seguridad y gobernanza
+
+- Mantener el servidor limitado a localhost hasta contar con autenticación y aislamiento adecuados.
+- Verificar el directorio de trabajo y los permisos de cada agente.
+- Exigir autorización humana antes de enviar mensajes, publicar, gastar, borrar o cambiar sistemas.
+- No guardar contraseñas, tokens ni datos sensibles en instrucciones, memoria, capturas, commits o registros.
+- Revisar y probar cada integración antes de utilizarla con información de clientes.
+- Crear respaldos y pasar las pruebas antes de actualizar la instalación.
+
+Esta etapa no constituye una certificación de seguridad empresarial. Consulta [Línea base de seguridad](docs/EVIA_SECURITY.md).
+
+## Documentación técnica
+
+- [Fundamentos y fases del proyecto](docs/EVIA_FOUNDATION.md)
+- [Seguridad y límites operativos](docs/EVIA_SECURITY.md)
+- [Roles iniciales de EVIA](evia/roles/README.md)
+- [Copiar respuestas y rotación de mobiliario](docs/EVIA_UX_COPIAR_Y_ROTACION.md)
+
+## Origen, créditos y licencia
+
+**EVIA Office es una adaptación independiente de [Pixel Office](https://github.com/basriayaz/pixel-office), proyecto creado por Basri Ayaz.**
+
+- **Software original:** Pixel Office, © 2026 Basri Ayaz.
+- **Dirección, adaptación, modificaciones y documentación propias de EVIA:** Salvador Villarreal Gómez, Estrategias Vitales IA, 2026.
+- **Licencia del código original:** MIT. Se conserva el aviso de copyright y el texto de permiso en [LICENSE](LICENSE).
+- **Relación con el proyecto de origen:** esta adaptación no implica afiliación, respaldo ni patrocinio de su autor.
+
+El reconocimiento de los aportes de EVIA no sustituye ni limita los derechos y avisos correspondientes al código original.
 
 ---
 
-<div align="center">
-
-**Like it? [⭐ Star the repo](https://github.com/basriayaz/pixel-office/stargazers)**, share a screenshot of your office, or [open an issue](https://github.com/basriayaz/pixel-office/issues) with the theme you want next.
-
-[![Star history](https://api.star-history.com/svg?repos=basriayaz/pixel-office&type=Date)](https://star-history.com/#basriayaz/pixel-office&Date)
-
-</div>
+**Estrategias Vitales IA** · [iaconsultoresvitales.mx](https://iaconsultoresvitales.mx)
