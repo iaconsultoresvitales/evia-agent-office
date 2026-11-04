@@ -4,7 +4,7 @@
 >
 > **Estado actual contrastado:** F1-01 a F1-05 fueron integrados a `main@f691afc9599b05717913d8ba91ae392fdeb46ab8`, con pruebas CI de PR #12 [6/6 PASS](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41920590475). Task OS funciona como infraestructura de backend opt-in: rutas UI/HTTP y agentes no están migrados al servicio empresarial. No hubo despliegue a la Mac ni autorización para acciones externas.
 >
-> **Decisiones inalteradas:** ADR-F003-01 (Board JSON/JSONL) y ADR-F003-02 (contrato opcional) están ACCEPTED; DEC-F003-05 (fixture sintético) está ACCEPTED. **ADR-F003-03 (Director IA mínimo) y ADR-F003-04 (gobierno progresivo de herramientas) continúan PROPUESTOS**, pendientes de decisión expresa de Salva. F2-01 solo se puede diseñar sin activar agentes ni permisos.
+> **Decisiones actualizadas tras autorización expresa de Salva (4 de noviembre de 2026):** ADR-F003-01/02 y DEC-F003-05 conservan estado ACCEPTED. **ADR-F003-03 (Director IA mínimo) y ADR-F003-04 (gobierno progresivo de herramientas) pasan a ACCEPTED**, según respuesta «sí y sí» a las dos decisiones. Sus registros versionados están en [ADR-F003-03](ADR-F003-03-DIRECTOR-IA.md) y [ADR-F003-04](ADR-F003-04-GOBIERNO-HERRAMIENTAS.md). El texto histórico posterior que indica «PROPUESTOS» refleja el estado original de F0-03 y queda superado por esta adenda. La aprobación autoriza el diseño F2-01, no la implementación, merge, despliegue ni conexión a proveedores.
 
 **Estado:** DISEÑO F0-03 PARCIALMENTE APROBADO. Salva aprobó expresamente tres decisiones el 4 de noviembre de 2026. Los ADR-F003-01 y 02 son ACCEPTED; los ADR-F003-03 y 04 siguen PROPUESTOS. La aprobación no autoriza merge ni despliegue.  
 **Fecha:** 4 de noviembre de 2026.  

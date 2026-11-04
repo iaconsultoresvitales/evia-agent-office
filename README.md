@@ -80,13 +80,14 @@ Abrir [http://127.0.0.1:4747](http://127.0.0.1:4747). No se debe usar el directo
 | Etapa | Objetivo | Situación |
 | --- | --- | --- |
 | **F0-02** | Auditoría AS-IS y matriz de capacidades | Documentación de auditoría preparada |
-| **F0-03** | Arquitectura, contratos, decisiones y permisos | Diseño TO-BE preparado; ADR-F003-01 y 02 aceptados |
+| **F0-03** | Arquitectura, contratos, decisiones y permisos | Diseño TO-BE consolidado; ADR-F003-01 a 04 y DEC-F003-05 aceptados según sus alcances |
 | **F1-01** | Task Contract v1 compatible con el tablero | Implementado, seis checks PASS y suite completa `npm test` PASS en CI ([PR #5](https://github.com/iaconsultoresvitales/evia-agent-office/pull/5)) |
 | **F1-02** | Task Service y transiciones gestionadas | **Fusionado y probado** en CI ([PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6)) |
 | **F1-03** | Evidencia y eventos correlacionados | **Fusionado y probado** en CI ([PR #8](https://github.com/iaconsultoresvitales/evia-agent-office/pull/8)) |
 | **F1-04** | Recuperación e idempotencia de Task OS | **Fusionado y probado** en CI ([PR #10](https://github.com/iaconsultoresvitales/evia-agent-office/pull/10)) |
 | **F1-05** | Integración y cierre de QA del backend Task OS | **Fusionado y probado** en CI 6/6 PASS ([PR #12](https://github.com/iaconsultoresvitales/evia-agent-office/pull/12)); no desplegado. UI y agentes no conectados |
-| **F2 a F5** | Director IA, aislamiento, QA y aprobaciones | **Objetivos futuros**, no funcionalidades terminadas |
+| **F2-01** | Director IA mínimo plan-only | **Especificación preparada**, implementación y pruebas pendientes; sin conexión con agentes ni proveedores |
+| **F2-02 a F5** | Ejecución del Director, aislamiento, QA y aprobaciones | **Objetivos futuros**, no funcionalidades terminadas |
 | **F6 a F8** | Integraciones, observabilidad, pilotos y productización | Objetivo posterior |
 
 No se promete sincronización automática de historiales de ChatGPT, Claude Code o Codex ni acceso universal a servicios externos. Toda integración depende de interfaces oficiales, permisos y pruebas.
@@ -116,6 +117,9 @@ Los documentos siguientes forman parte de la adaptación EVIA:
 - [Seguridad y reporte de vulnerabilidades](SECURITY.md)
 - [F0-02: Auditoría AS-IS, baseline histórica](docs/F0-02-AS-IS.md)
 - [F0-03: Arquitectura TO-BE v0.1 y ADR](docs/F0-03-TO-BE-v0.md)
+- [ADR-F003-03: Director IA mínimo](docs/ADR-F003-03-DIRECTOR-IA.md)
+- [ADR-F003-04: Gobierno progresivo de herramientas](docs/ADR-F003-04-GOBIERNO-HERRAMIENTAS.md)
+- [F2-01: Especificación Director IA plan-only](docs/F2-01-DIRECTOR-IA-MINIMO.md)
 
 ## Origen, créditos y licencia
 
