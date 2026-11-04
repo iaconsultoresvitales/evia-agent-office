@@ -24,8 +24,9 @@ La visión es que Salva solicite un resultado; un Director IA planifique y coord
 
 | Rama | Función | Criterio de avance |
 | --- | --- | --- |
-| **main** | Rama principal del repositorio | Recibe incrementos tras revisión y QA; fusionar código no actualiza automáticamente la instalación local |
-| **feature/evia-foundation** | Rama de desarrollo e integración EVIA | Reúne localización, roles, UX y F1-01 Task Contract; los siguientes incrementos se desarrollan por ticket y PR |
+| **main** | Rama principal | F1-01 a F1-04 fusionados y con CI aprobado; la instalación local de Salva no se actualiza automáticamente |
+| **feature/evia-foundation** | Rama histórica de adaptación | Conservada como referencia; no es la rama de trabajo actual |
+| **docs/f0-02-as-is-review-20261104** y **docs/f0-03-to-be-draft-20261104** | Documentos Fase 0 | Incluyen documentos de auditoría y arquitectura pendientes de decidir si se integran a `main` |
 
 La base de Pixel Office aporta oficina visual, perfiles, conversaciones, memoria, tablero y personalización. La presencia de un conector o una función en la interfaz **no acredita** que esté configurado, autorizado o validado para datos de clientes. El estado de cada fase se comprueba con sus commits, pruebas y PR.
 
@@ -37,11 +38,11 @@ Estas imágenes documentan la instalación personalizada de EVIA y no sustituyen
 | --- | --- |
 | ![Lauren en su espacio de trabajo](docs/images/evia-office-lauren.png) | ![Editor visual de EVIA Office](docs/images/evia-office-editor.png) |
 
-Antes de hacer público el repositorio, debe revisarse que las capturas no revelen información interna.
+Las capturas representan la personalización de EVIA. No incluyen credenciales visibles según la revisión visual de preparación de publicación; no acreditan integración funcional con servicios externos.
 
 ## Instalación
 
-Requisitos: **Node.js 20 o superior**, Git y acceso autorizado a los motores de IA que se utilicen.
+Requisitos: **Node.js 20 o superior**, Git y acceso autorizado a los motores de IA que se utilicen. Mientras el repositorio sea privado, clonar requiere invitación de GitHub; al hacerlo público, cualquier persona podrá consultar y clonar el código. **No existe todavía un instalador de escritorio (`.dmg`/`.exe`) validado.**
 
 ~~~bash
 git clone https://github.com/iaconsultoresvitales/evia-agent-office.git
@@ -52,15 +53,9 @@ npm run dev
 
 La rama predeterminada del comando anterior es **main**. La aplicación de desarrollo utiliza el puerto local configurado, normalmente [http://127.0.0.1:4747](http://127.0.0.1:4747).
 
-Para trabajar con la adaptación EVIA:
+`main` ya contiene la adaptación EVIA y los incrementos F1-01 a F1-04. La rama `feature/evia-foundation` permanece como referencia histórica y no necesita seleccionarse para instalar. No se deben versionar directorios de datos de agentes, conversaciones, respaldos, credenciales ni información de clientes.
 
-~~~bash
-git switch feature/evia-foundation
-npm ci
-npm run dev
-~~~
-
-Las instrucciones específicas de la instalación de Salva, con código y datos persistentes separados, se documentan en el [README de feature/evia-foundation](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/README.md). No se deben versionar directorios de datos de agentes, conversaciones, respaldos, credenciales ni información de clientes.
+Para una instalación o demostración compartida, utiliza credenciales propias del proveedor y un directorio de datos independiente por computadora. Este proyecto no incluye cuentas, sesiones ni claves listas para terceros.
 
 ### Instalación local de Salva
 
@@ -87,7 +82,10 @@ Abrir [http://127.0.0.1:4747](http://127.0.0.1:4747). No se debe usar el directo
 | **F0-02** | Auditoría AS-IS y matriz de capacidades | Documentación de auditoría preparada |
 | **F0-03** | Arquitectura, contratos, decisiones y permisos | Diseño TO-BE preparado; ADR-F003-01 y 02 aceptados |
 | **F1-01** | Task Contract v1 compatible con el tablero | Implementado, seis checks PASS y suite completa `npm test` PASS en CI ([PR #5](https://github.com/iaconsultoresvitales/evia-agent-office/pull/5)) |
-| **F1-02 a F5** | Task Service, Director IA, aislamiento, QA y aprobaciones | Incrementos posteriores sujetos a tickets y pruebas |
+| **F1-02** | Task Service y transiciones gestionadas | **Fusionado y probado** en CI ([PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6)) |
+| **F1-03** | Evidencia y eventos correlacionados | **Fusionado y probado** en CI ([PR #8](https://github.com/iaconsultoresvitales/evia-agent-office/pull/8)) |
+| **F1-04** | Recuperación e idempotencia de Task OS | **Fusionado y probado** en CI ([PR #10](https://github.com/iaconsultoresvitales/evia-agent-office/pull/10)) |
+| **F2 a F5** | Director IA, aislamiento, QA y aprobaciones | **Objetivos futuros**, no funcionalidades terminadas |
 | **F6 a F8** | Integraciones, observabilidad, pilotos y productización | Objetivo posterior |
 
 No se promete sincronización automática de historiales de ChatGPT, Claude Code o Codex ni acceso universal a servicios externos. Toda integración depende de interfaces oficiales, permisos y pruebas.
@@ -111,6 +109,10 @@ Los documentos siguientes forman parte de la adaptación EVIA:
 - [Roles iniciales de EVIA](evia/roles/README.md)
 - [UX: copiar respuestas y rotar muebles](docs/EVIA_UX_COPIAR_Y_ROTACION.md)
 - [F1-01: Task Contract v1](docs/F1-01-TASK-CONTRACT.md)
+- [F1-02: Task Service](docs/F1-02-TASK-SERVICE.md)
+- [F1-03: Evidencia y eventos](docs/F1-03-TASK-EVIDENCE.md)
+- [F1-04: Recuperación e idempotencia](docs/F1-04-TASK-RECOVERY.md)
+- [Seguridad y reporte de vulnerabilidades](SECURITY.md)
 - [F0-02: Auditoría AS-IS](https://github.com/iaconsultoresvitales/evia-agent-office/blob/docs/f0-02-as-is-review-20261104/docs/F0-02-AS-IS.md)
 
 ## Origen, créditos y licencia

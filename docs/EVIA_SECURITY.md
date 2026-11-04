@@ -14,7 +14,7 @@ Fuente: `README.md`, `src/server/index.ts`, `src/server/security.ts` y `src/serv
 
 ## Reglas EVIA obligatorias para F1
 
-- Mantener el repositorio privado y la aplicación solo en localhost.
+- Mantener **datos operativos, claves y conversaciones privados** y la aplicación solo en localhost. Publicar el código bajo MIT es una decisión separada y no autoriza publicar datos locales ni abrir acceso remoto.
 - No establecer `PIXEL_OFFICE_ALLOW_REMOTE=1`.
 - Usar `pixel-office init` en una carpeta de proyecto aislada y validar `cwd` en cada perfil.
 - Crear agentes con `permissionMode: plan`; no habilitar `bypassPermissions`.
@@ -39,7 +39,7 @@ Bloquear despliegue hasta implementar, probar y revisar:
 
 - [x] Revisión documental de arquitectura y controles existentes.
 - [x] Restricciones de operación segura definidas.
-- [ ] Ejecutar pruebas y smoke tests en entorno aislado.
-- [ ] Revisión de dependencias y licencias de assets.
+- [x] CI ejecutó pruebas automatizadas, typecheck, build y smoke en entorno efímero; esto no acredita seguridad de producción.
+- [ ] Revisión independiente de vulnerabilidades de dependencias y permisos de marcas/assets de terceros antes de una distribución comercial.
 - [ ] Auditoría de autenticación/RBAC para una futura versión alojada.
 - [ ] Pruebas de acciones sensibles con aprobaciones reales.

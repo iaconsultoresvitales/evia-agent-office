@@ -1,3 +1,5 @@
+> **EVIA Office notice:** This Turkish document is retained from the upstream Pixel Office project for historical attribution. It is not the installation guide for the EVIA adaptation. For current EVIA setup and status, see [README.md](README.md). Original project: [Basri Ayaz / Pixel Office](https://github.com/basriayaz/pixel-office).
+
 <div align="center">
 
 # Pixel Office
