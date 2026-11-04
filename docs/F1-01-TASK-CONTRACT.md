@@ -2,7 +2,7 @@
 
 **Proyecto:** EVIA Office OS  
 **Fase:** F1, primer incremento funcional del Task OS.  
-**Estado:** IMPLEMENTADO y CI 6/6 PASS; suite completa en CI y revisión humana pendientes.  
+**Estado:** IMPLEMENTADO, PROBADO, REVISADO y FUSIONADO en `feature/evia-foundation`; no desplegado ni fusionado en `main`.  
 **Fecha de preparación:** 4 de noviembre de 2026.  
 **Decisiones habilitantes:** `ADR-F003-01` y `ADR-F003-02`, ACCEPTED por Salva; `DEC-F003-05` para el caso de prueba.  
 **Código de referencia:** `feature/evia-foundation`, cuya línea de ejecución fue probada en el commit `5033cfb28529395e28e9e0dd47c6b19bcf7904df`.
@@ -94,10 +94,10 @@ No crear una base paralela de tareas ni reescribir todos los consumidores del Bo
 - [x] Tareas antiguas, incluidas las que tienen dependencias o notas, siguen legibles y operables.
 - [x] Un contrato validado sobrevive a guardar y reconstruir `Board` con el mismo directorio temporal.
 - [x] Los tests no utilizan red, credenciales ni directorios operativos de la Mac.
-- [ ] `npm run typecheck` y `npm test` completan PASS en la rama del incremento.
+- [x] `npm run typecheck` y `npm test` completan PASS en la rama del incremento.
 - [x] `node scripts/smoke.mjs` sigue mostrando PASS.
 - [x] El diff cambia únicamente archivos justificados por T1–T5; se documentan riesgos y regresiones.
-- [ ] Salva revisa el resultado antes de merge y despliegue.
+- [x] Salva revisó y autorizó integrar F1-01 en `feature/evia-foundation`; cualquier integración a `main` requiere aprobación separada.
 
 ## 7. Casos de prueba obligatorios
 
@@ -152,9 +152,11 @@ Si una decisión afecta estructura persistente de manera irreversible, detén el
 
 **IMPLEMENTADO:** sí, en `feature/f1-01-task-contract`, PR [#5](https://github.com/iaconsultoresvitales/evia-agent-office/pull/5). Cambios en esquema, Board, tests, package y workflow.  
 **CI selectiva:** PASS 6/6 en Ubuntu, macOS Intel y Windows, Node 20/22, run [41877869371](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41877869371), commit `cb26875bd1a5b3e558a1f0df3bb92d855183f84b`.  
-**Suite completa:** añadida en CI para Ubuntu/Node 22 en commit `34b50abb20ffe22fecd6da48970c1c7b5ef5f1ee`; resultado del nuevo run PENDIENTE al actualizar este documento.  
+**Suite completa:** `npm test` PASS en Ubuntu/Node 22 y seis jobs PASS en el [CI #21](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41880979811).  
 **Limitación constatada:** un contrato histórico inválido se conserva y puede diagnosticarse con el validador, pero todavía no genera alerta automática en la interfaz.  
-**REVISADO:** pendiente de revisión final y aceptación de Salva.  
-**FUSIONADO/DESPLEGADO:** no; requieren autorización explícita posterior.
+**REVISADO:** Salva autorizó integrar el PR #5.  
+**FUSIONADO:** sí, solo en `feature/evia-foundation`, commit `baeda63b4ca3e8736127a23ea4af3a089b053323`.  
+**QA de integración para `main`:** [CI #22](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41883580378), 6/6 PASS y `npm test` PASS en el commit reconciliado `98b13ab85a8cba159a2930e8cdcf06831fdef749`.  
+**EN MAIN / DESPLEGADO:** no; requieren autorización explícita posterior.
 
 **Siguiente ticket tras aceptación:** `F1-02`, Task Service y máquina de estados. La autorización para F1-01 no autoriza implícitamente F1-02.
