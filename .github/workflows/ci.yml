@@ -37,6 +37,9 @@ jobs:
           node scripts/test-chat-copy.mjs
       - name: Furniture rotation (orientations, collisions, saved layout)
         run: node scripts/test-furniture-rotation.mjs
+      - name: Full npm test suite (Ubuntu Node 22)
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 22
+        run: npm test
       - name: Server starts, serves the UI and shuts down
         run: node scripts/smoke.mjs
         env:
