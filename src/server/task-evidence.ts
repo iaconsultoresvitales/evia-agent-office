@@ -1,6 +1,6 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { z } from "zod";
-import type { Board, Task } from "./board.js";
+import type { Board, Task, PendingTaskAudit } from "./board.js";
 import type { EventLog, OfficeEvent } from "./events.js";
 import { parseTaskContractV1 } from "./task-contract.js";
 
@@ -26,7 +26,7 @@ export const taskEvidenceV1Schema = z.object({
 export type TaskEvidenceV1 = z.infer<typeof taskEvidenceV1Schema>;
 export type TaskAuditProblem =
   | "invalid_contract" | "untraced_task" | "status_mismatch"
-  | "untraced_evidence" | "duplicate_operation" | "orphan_event";
+  | "untraced_evidence" | "duplicate_operation" | "orphan_event" | "pending_outbox";
 export interface TaskAuditFinding { taskId: number; problem: TaskAuditProblem; detail: string }
 
 export interface EvidenceRecordInput {
@@ -40,6 +40,10 @@ export interface EvidenceRecordInput {
 }
 
 const eventData = (event: OfficeEvent): Record<string, unknown> => event.data ?? {};
+
+/** Store only a digest of the request, never the request's client data. */
+export const taskOperationDigest = (kind: string, request: unknown): string =>
+  createHash("sha256").update(JSON.stringify([kind, request])).digest("hex");
 
 export class TaskEvidenceJournal {
   readonly officeId: string;
@@ -58,46 +62,90 @@ export class TaskEvidenceJournal {
     return this.officeEvents().find((event) => eventData(event).operationId === operationId);
   }
 
+  /** Stable receipt lets a caller retry after a crash without running its mutation twice. */
+  receipt(operationId: string | undefined, kind: OfficeEvent["kind"], digest: string): { taskId: number; evidence?: TaskEvidenceV1 } | undefined {
+    const op = id.parse(operationId);
+    const existing = this.existingOperation(op);
+    const pending = this.board.pendingTaskAudits.find((item) => item.officeId === this.officeId && item.operationId === op);
+    const event = existing ?? pending?.event;
+    if (!event) return undefined;
+    const data = eventData(event as OfficeEvent);
+    if (event.kind !== kind || data.requestDigest !== digest) {
+      throw new Error(`Conflicting task audit operation: ${op}`);
+    }
+    const taskId = event.task;
+    if (!Number.isSafeInteger(taskId) || !taskId || taskId <= 0) throw new Error("Invalid task audit receipt");
+    const evidence = taskEvidenceV1Schema.safeParse(data.evidence);
+    return { taskId, ...(evidence.success ? { evidence: evidence.data } : {}) };
+  }
+
   /** Called BEFORE mutating Board; a repeated operation ID cannot silently write twice. */
   preflight(operationId: string | undefined, runRef?: string): string {
     const op = id.parse(operationId);
     if (runRef !== undefined) id.parse(runRef);
-    if (this.existingOperation(op)) throw new Error(`Duplicate task audit operation: ${op}`);
+    if (this.existingOperation(op) || this.board.pendingTaskAudits.some((item) => item.officeId === this.officeId && item.operationId === op)) {
+      throw new Error(`Duplicate task audit operation: ${op}`);
+    }
     return op;
   }
 
-  recordCreate(task: Task, by: string, operationId: string, runRef?: string): OfficeEvent {
+  private pending(task: Task, operationId: string, event: PendingTaskAudit["event"]): PendingTaskAudit {
+    const outboxId = randomUUID();
+    return { outboxId, officeId: this.officeId, operationId, taskId: task.id,
+      event: { ...event, data: { ...event.data, outboxId } } };
+  }
+
+  prepareCreate(task: Task, by: string, operationId: string, requestDigest: string, runRef?: string): PendingTaskAudit {
     const contract = parseTaskContractV1(task.contract);
-    return this.events.add({
+    return this.pending(task, operationId, {
       kind: "task_contract_created", task: task.id, by,
-      data: { auditVersion: 1, operationId, officeId: this.officeId, projectId: contract.projectId,
+      data: { auditVersion: 1, operationId, requestDigest, officeId: this.officeId, projectId: contract.projectId,
         status: task.status, evidenceRefs: [...contract.evidenceRefs], ...(runRef ? { runRef } : {}) },
     });
   }
 
-  recordTransition(task: Task, from: Task["status"], by: string, operationId: string, addedEvidence: string[], runRef?: string): OfficeEvent {
+  prepareTransition(task: Task, from: Task["status"], by: string, operationId: string, requestDigest: string, addedEvidence: string[], runRef?: string): PendingTaskAudit {
     const contract = parseTaskContractV1(task.contract);
-    return this.events.add({
+    return this.pending(task, operationId, {
       kind: "task_contract_transition", task: task.id, by,
-      data: { auditVersion: 1, operationId, officeId: this.officeId, projectId: contract.projectId,
+      data: { auditVersion: 1, operationId, requestDigest, officeId: this.officeId, projectId: contract.projectId,
         from, to: task.status, evidenceRefsAdded: [...addedEvidence], ...(runRef ? { runRef } : {}) },
     });
+  }
+
+  /** Flushes only metadata. Does not replay business mutations, agent runs or external tools. */
+  flush(): { appended: number; acknowledged: number } {
+    let appended = 0, acknowledged = 0;
+    for (const item of this.board.pendingTaskAudits.filter((p) => p.officeId === this.officeId)) {
+      const history = this.officeEvents();
+      const duplicate = history.find((event) => eventData(event).outboxId === item.outboxId);
+      if (duplicate) {
+        if (duplicate.kind !== item.event.kind || duplicate.task !== item.taskId || eventData(duplicate).operationId !== item.operationId) {
+          throw new Error(`Conflicting recovered audit event: ${item.outboxId}`);
+        }
+      } else {
+        if (history.some((event) => eventData(event).operationId === item.operationId)) {
+          throw new Error(`Conflicting recovered audit operation: ${item.operationId}`);
+        }
+        this.events.add(item.event);
+        appended++;
+      }
+      this.board.acknowledgeTaskAudit(item.outboxId);
+      acknowledged++;
+    }
+    return { appended, acknowledged };
   }
 
   /** Independent evidence capture; does not execute tools or validate factual accuracy. */
   record(input: EvidenceRecordInput): { evidence: TaskEvidenceV1; recorded: boolean } {
     const operationId = id.parse(input.operationId);
     if (input.runRef !== undefined) id.parse(input.runRef);
-    const old = this.existingOperation(operationId);
-    if (old) {
-      const prior = taskEvidenceV1Schema.safeParse(eventData(old).evidence);
-      if (old.kind === "task_evidence_recorded" && prior.success
-        && prior.data.taskId === input.taskId && prior.data.projectId === input.projectId
-        && prior.data.kind === input.kind && prior.data.ref === input.ref
-        && prior.data.runRef === input.runRef && old.by === input.by) {
-        return { evidence: prior.data, recorded: false };
-      }
-      throw new Error(`Conflicting task audit operation: ${operationId}`);
+    const digest = taskOperationDigest("task_evidence_recorded", input);
+    const prior = this.receipt(operationId, "task_evidence_recorded", digest);
+    if (prior) {
+      this.flush();
+      if (!prior.evidence) throw new Error("Recovered evidence receipt is incomplete");
+      return { evidence: prior.evidence, recorded: false };
     }
 
     const task = this.board.tasks.find((candidate) => candidate.id === input.taskId);
@@ -113,14 +161,13 @@ export class TaskEvidenceJournal {
       ...(input.runRef ? { runRef: input.runRef } : {}) });
     const refs = [...new Set([...contract.evidenceRefs, evidence.ref])];
     const next = parseTaskContractV1({ ...contract, evidenceRefs: refs });
-    // Board's atomic JSON write is independent of EventLog's JSONL append. If
-    // the append fails, inspect() exposes the gap instead of auto-repairing it.
-    if (refs.length !== contract.evidenceRefs.length) {
-      this.board.updateTask(task.id, { contract: next }, input.by);
-    }
-    this.events.add({ kind: "task_evidence_recorded", task: task.id, by: input.by,
-      data: { auditVersion: 1, officeId: this.officeId, projectId: contract.projectId,
-        operationId, evidence } });
+    // Evidence and a pending event are durably committed in one Board update.
+    // A failed event append can be completed after restart via flush().
+    this.board.updateTask(task.id, { contract: next }, input.by, (updated) =>
+      this.pending(updated, operationId, { kind: "task_evidence_recorded", task: updated.id, by: input.by,
+        data: { auditVersion: 1, officeId: this.officeId, projectId: contract.projectId,
+          operationId, requestDigest: digest, evidence } }));
+    this.flush();
     return { evidence, recorded: true };
   }
 
@@ -133,6 +180,9 @@ export class TaskEvidenceJournal {
   inspect(): TaskAuditFinding[] {
     const findings: TaskAuditFinding[] = [];
     const events = this.officeEvents();
+    for (const item of this.board.pendingTaskAudits.filter((p) => p.officeId === this.officeId)) {
+      findings.push({ taskId: item.taskId, problem: "pending_outbox", detail: `Audit metadata awaiting flush: ${item.operationId}` });
+    }
     const knownTasks = new Set(this.board.tasks.map((task) => task.id));
     for (const event of events) {
       if (event.task !== undefined && !knownTasks.has(event.task)) {
@@ -178,3 +228,4 @@ export class TaskEvidenceJournal {
     return findings;
   }
 }
+
