@@ -24,7 +24,7 @@ Evitar duplicar tareas, transiciones y registros de evidencia tras un error entr
 - Las operaciones auditadas de F1-03 anteriores a este cambio no contienen digest de petición, por lo que no se recuperan automáticamente mediante reintentos de F1-04.
 - El registro evidencia la ejecución administrativa de una acción, no la veracidad del contenido ni una autorización del actor. F4/F5 siguen pendientes.
 - **No** se reanudan sesiones Claude, agentes, conectores ni herramientas externas. El método de recuperación solamente termina el registro administrativo pendiente.
-- Las escrituras a JSONL pueden truncarse en el último renglón; el lector tolerante puede omitir una línea parcial, y la recuperación puede anexar un evento legible. Conservar el archivo original para inspección.
+- Las escrituras a JSONL pueden truncarse en el último renglón; el lector tolerante omite la línea parcial, y `EventLog.add` inserta un separador antes del siguiente registro para conservar sus bytes y evitar que se concatenen con el evento recuperado.
 
 ## QA requerido
 
@@ -32,6 +32,7 @@ Evitar duplicar tareas, transiciones y registros de evidencia tras un error entr
 - [ ] Simulación de fallo antes del append para creación, transición y evidencia.
 - [ ] Reanudación tras reinicio sin repetir la mutación de negocio.
 - [ ] Fallo después de append y antes del acuse, sin duplicar evento.
+- [ ] Tail truncado de JSONL conservado sin corromper el siguiente evento.
 - [ ] Reintento con digest cambiado rechazado, oficina distinta aislada.
 - [ ] Pruebas F1-01/F1-02/F1-03, typecheck, build, full suite, smoke y CI multiplataforma PASS.
 - [ ] Diff revisado. PR aprobado por Salva antes de fusionar.
