@@ -24,9 +24,9 @@ La visión es que Salva solicite un resultado; un Director IA planifique y coord
 
 | Rama | Función | Criterio de avance |
 | --- | --- | --- |
-| **main** | Rama principal | F1-01 a F1-04 fusionados y con CI aprobado; la instalación local de Salva no se actualiza automáticamente |
+| **main** | Rama principal | F1-01 a F1-05 fusionados y con CI aprobado; la instalación local de Salva no se actualiza automáticamente |
 | **feature/evia-foundation** | Rama histórica de adaptación | Conservada como referencia; no es la rama de trabajo actual |
-| **docs/f0-02-as-is-review-20261104** y **docs/f0-03-to-be-draft-20261104** | Documentos Fase 0 | Incluyen documentos de auditoría y arquitectura pendientes de decidir si se integran a `main` |
+| **docs/f0-02-as-is-review-20261104** y **docs/f0-03-to-be-draft-20261104** | Ramas documentales históricas | Sus instantáneas F0-02 y F0-03 se preservan con adendas de continuidad en `docs/` |
 
 La base de Pixel Office aporta oficina visual, perfiles, conversaciones, memoria, tablero y personalización. La presencia de un conector o una función en la interfaz **no acredita** que esté configurado, autorizado o validado para datos de clientes. El estado de cada fase se comprueba con sus commits, pruebas y PR.
 
@@ -85,7 +85,7 @@ Abrir [http://127.0.0.1:4747](http://127.0.0.1:4747). No se debe usar el directo
 | **F1-02** | Task Service y transiciones gestionadas | **Fusionado y probado** en CI ([PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6)) |
 | **F1-03** | Evidencia y eventos correlacionados | **Fusionado y probado** en CI ([PR #8](https://github.com/iaconsultoresvitales/evia-agent-office/pull/8)) |
 | **F1-04** | Recuperación e idempotencia de Task OS | **Fusionado y probado** en CI ([PR #10](https://github.com/iaconsultoresvitales/evia-agent-office/pull/10)) |
-| **F1-05** | Integración y cierre de QA del backend Task OS | **Implementado y probado en PR #12**, CI 6/6 PASS ([run #37](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41920058801)); revisión, merge y despliegue pendientes. UI y agentes no conectados |
+| **F1-05** | Integración y cierre de QA del backend Task OS | **Fusionado y probado** en CI 6/6 PASS ([PR #12](https://github.com/iaconsultoresvitales/evia-agent-office/pull/12)); no desplegado. UI y agentes no conectados |
 | **F2 a F5** | Director IA, aislamiento, QA y aprobaciones | **Objetivos futuros**, no funcionalidades terminadas |
 | **F6 a F8** | Integraciones, observabilidad, pilotos y productización | Objetivo posterior |
 
@@ -114,7 +114,8 @@ Los documentos siguientes forman parte de la adaptación EVIA:
 - [F1-03: Evidencia y eventos](docs/F1-03-TASK-EVIDENCE.md)
 - [F1-04: Recuperación e idempotencia](docs/F1-04-TASK-RECOVERY.md)
 - [Seguridad y reporte de vulnerabilidades](SECURITY.md)
-- [F0-02: Auditoría AS-IS](https://github.com/iaconsultoresvitales/evia-agent-office/blob/docs/f0-02-as-is-review-20261104/docs/F0-02-AS-IS.md)
+- [F0-02: Auditoría AS-IS, baseline histórica](docs/F0-02-AS-IS.md)
+- [F0-03: Arquitectura TO-BE v0.1 y ADR](docs/F0-03-TO-BE-v0.md)
 
 ## Origen, créditos y licencia
 
