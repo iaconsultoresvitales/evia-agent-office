@@ -1,7 +1,7 @@
 # F2-01 | Director IA mínimo: planificación y registro controlado
 
 **Proyecto:** EVIA Office OS. **Fase:** F2, primer incremento.
-**Estado:** IMPLEMENTACIÓN EN RAMA DE TRABAJO, **PENDIENTE DE CI / REVISIÓN / FUSIÓN / DESPLIEGUE**.
+**Estado:** IMPLEMENTADO Y PROBADO EN CI EN RAMA F2-01, **PENDIENTE DE REVISIÓN / FUSIÓN / DESPLIEGUE**.
 **Base:** `main@5d909a739096168e3905c9fc81dc5cb3fdf7df1c` después de PR #13.
 **Decisiones:** ADR-F003-03 y ADR-F003-04 ACCEPTED; ADR-F003-01/02 y DEC-F003-05 conservadas.
 **Aprobador de implementación/merge/despliegue:** Salvador Villarreal Gómez, por decisiones separadas.
@@ -125,12 +125,12 @@ interface DirectorPlanDraftV1 {
 
 ## 9. Aceptación y rollback
 
-- [ ] PlanDraft estricto y DAG validado con casos positivos/negativos.
-- [ ] `propose` sin mutación, `registerReviewedPlan` solo con gate explícito del harness.
-- [ ] TaskService y Journal utilizados, sin segundo almacén ni credenciales.
-- [ ] Retry/crash idempotente y consistente con F1, incluso registro parcialmente completado.
-- [ ] Cero imports/ejecuciones de motores IA y herramientas externas.
-- [ ] Test fixture, typecheck, build, npm test, smoke y CI 6/6 PASS con SHA y URL.
+- [x] PlanDraft estricto y DAG validado con casos positivos/negativos.
+- [x] `propose` sin mutación, `registerReviewedPlan` solo con gate explícito del harness.
+- [x] TaskService y Journal utilizados, sin segundo almacén ni credenciales.
+- [x] Retry/crash idempotente y consistente con F1, incluso registro parcialmente completado.
+- [x] Cero imports/ejecuciones de motores IA y herramientas externas en los módulos F2-01.
+- [x] Test fixture, typecheck, build, npm test, smoke y CI 6/6 PASS: [run #44](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41931591083), primer commit de código `4d0a56fd998adc6cc854dae41bc1ac2e0a0dc969`.
 - [ ] Diff, evidencias de QA, riesgos y rollback revisados.
 - [ ] Salva aprueba PR antes de merge, despliegue no implícito.
 
@@ -142,7 +142,9 @@ interface DirectorPlanDraftV1 {
 - La revisión simulada se emite solo mediante `simulateDirectorReviewForHarnessOnly`; **no habilita aprobación real** ni está conectada a UI.
 - `TaskService` y `TaskEvidenceJournal` mantienen la persistencia F1; `operationId` y huella del plan proporcionan deduplicación y rechazo de cambios.
 - La suite sintética cubre propuesta pura, DAG, límites, roles, revisión, cambios de payload, recuperación tras caída, referencias, operaciones y convivencia con Board legado.
-- Resultados reales de pruebas, CI y SHA de rama: **PENDIENTE** hasta su ejecución. Un PASS previo de F1 no acredita F2-01.
+- **VERIFICADO en CI:** run #44, seis de seis jobs completados con éxito (Ubuntu, macOS Intel y Windows; Node 20/22). Ubuntu/Node 22 pasó `npm test` completo; los seis jobs pasaron focal F2-01, typecheck, build y smoke. El primer commit de implementación es `4d0a56fd998adc6cc854dae41bc1ac2e0a0dc969`.
+- **Límite de la evidencia local:** `node --check` del test y `git diff --check` pasaron; no se pudo ejecutar la suite local porque el entorno temporal carecía de dependencias npm y no pudo restituirlas. El PASS se fundamenta en CI, no en una afirmación local.
+- **PENDIENTE:** revisión del PR por Salva, fusión expresamente autorizada y cualquier despliegue posterior. Ningún gate simulado se considera autenticación real; conservar un solo escritor de Board.
 
 ## 10. Prompt listo para Codex o Claude Code, cuando Salva autorice implementar
 
