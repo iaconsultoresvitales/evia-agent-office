@@ -29,6 +29,8 @@ jobs:
         run: node scripts/test-evia-roles.mjs
       - name: F1-01 task contract validation and legacy compatibility
         run: node scripts/test-task-contract.mjs
+      - name: F1-02 guarded task transitions and persistence
+        run: node scripts/test-task-service.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)

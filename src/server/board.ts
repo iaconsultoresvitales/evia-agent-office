@@ -248,11 +248,14 @@ export class Board extends EventEmitter {
     this.save();
   }
 
-  updateTask(id: number, patch: { status?: TaskStatus; owner?: string; title?: string; detail?: string; note?: string; review?: boolean; after?: number[] }, by: string): Task | undefined {
+  updateTask(id: number, patch: { status?: TaskStatus; owner?: string; title?: string; detail?: string; note?: string; review?: boolean; after?: number[]; contract?: unknown }, by: string): Task | undefined {
     const task = this.data.tasks.find((x) => x.id === id);
     if (!task) return undefined;
+    // Validate the new contract before any mutation or disk write.
+    const acceptedContract = patch.contract === undefined ? undefined : parseTaskContractV1(patch.contract);
     const prev = task.status, prevOwner = task.owner;
     const before = JSON.stringify([task.title, task.detail, !!task.review, task.after ?? []]);
+    if (acceptedContract) task.contract = acceptedContract;
     if (patch.status && TASK_STATUSES.includes(patch.status)) task.status = patch.status;
     if (patch.owner) task.owner = patch.owner;
     if (patch.title !== undefined) task.title = patch.title.trim().slice(0, 160) || task.title;
