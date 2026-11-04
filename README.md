@@ -14,8 +14,6 @@
 
 </div>
 
-> **Estado del proyecto:** repositorio privado, adaptación en desarrollo y de uso local. Esta rama, **main**, mantiene la base de Pixel Office. Las personalizaciones funcionales y los documentos técnicos propios de EVIA se desarrollan en **feature/evia-foundation**. No hay despliegue público de EVIA Office.
-
 ## Propósito
 
 EVIA Office es la iniciativa de EVIA para construir un centro de mando empresarial con agentes especializados, memoria, tareas, herramientas y supervisión humana.
