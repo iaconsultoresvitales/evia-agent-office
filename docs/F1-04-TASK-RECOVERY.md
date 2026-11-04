@@ -2,7 +2,7 @@
 
 **Ticket:** [#9](https://github.com/iaconsultoresvitales/evia-agent-office/issues/9).  
 **Base:** F1-03 en `main` (`96f746763b3f6d51d9f5418372cf6ecf752bc8d1`).  
-**Estado:** IMPLEMENTADO Y PROBADO EN PR; fusión pendiente de aprobación.
+**Estado vigente (actualización 2026-11-04):** IMPLEMENTADO, PROBADO y FUSIONADO en `main` mediante [PR #10](https://github.com/iaconsultoresvitales/evia-agent-office/pull/10), commit `8b1740008bddd742155acbef46d017ca3e48c730`; NO DESPLEGADO. La aprobación pendiente era el estado histórico anterior al merge.
 
 ## Objetivo
 
@@ -35,6 +35,6 @@ Evitar duplicar tareas, transiciones y registros de evidencia tras un error entr
 - [x] Tail truncado de JSONL conservado sin corromper el siguiente evento.
 - [x] Reintento con digest cambiado rechazado, oficina distinta aislada.
 - [x] Pruebas F1-01/F1-02/F1-03, typecheck, build, full suite, smoke y CI multiplataforma PASS en [run 41894999132](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41894999132).
-- [ ] Diff revisado. PR aprobado por Salva antes de fusionar.
+- [x] Diff revisado y PR #10 fusionado con autorización registrada. No equivale a despliegue en Mac.
 
 **Rollback:** revertir la capa de F1-04 sin eliminar `taskAuditOutbox` de los Boards de usuarios; conservar historial y respaldos. No desplegar en la Mac productiva en este ticket.

@@ -3,7 +3,7 @@
 **Proyecto:** EVIA Office OS. **Fase:** F1, trazabilidad local-first.  
 **Ticket:** [#7](https://github.com/iaconsultoresvitales/evia-agent-office/issues/7).  
 **Base:** F1-02 fusionado en `main`, commit `f191f3f685adc5f8e59e700c7bd958d91a3dd470`.  
-**Estado:** IMPLEMENTACIÓN EN PR, revisión y CI pendientes.
+**Estado vigente (actualización 2026-11-04):** IMPLEMENTADO, PROBADO y FUSIONADO en `main` mediante [PR #8](https://github.com/iaconsultoresvitales/evia-agent-office/pull/8), commit `96f746763b3f6d51d9f5418372cf6ecf752bc8d1`; NO DESPLEGADO. “Implementación en PR” era el estado histórico antes del merge.
 
 ## Objetivo
 
@@ -34,14 +34,14 @@ Las referencias solo admiten identificadores opacos, como `fixture:resultado-001
 
 ## Criterios de aceptación
 
-- [ ] Contrato Zod estricto, referencias inválidas rechazadas sin escritura parcial.
-- [ ] Eventos con `officeId`, `projectId`, `taskId`, `operationId`, actor y `runRef` cuando corresponda.
-- [ ] Evidencia legible después de reiniciar Board y EventLog.
-- [ ] Registro duplicado con misma clave no añade líneas ni modifica Board; clave conflictiva se rechaza.
-- [ ] Reconciliación señala divergencias y registros ausentes sin repararlos.
-- [ ] No se alteran los consumidores legados ni la interfaz de chat.
-- [ ] Typecheck, `npm test`, smoke y CI 6/6 PASS.
-- [ ] Revisión de diff y PR aprobado por Salva antes de cualquier merge.
+- [x] Contrato Zod estricto, referencias inválidas rechazadas sin escritura parcial, según pruebas F1-03.
+- [x] Eventos con `officeId`, `projectId`, `taskId`, `operationId`, actor y `runRef` cuando corresponda.
+- [x] Evidencia legible después de reiniciar Board y EventLog.
+- [x] Registro duplicado con misma clave no añade líneas ni modifica Board; clave conflictiva se rechaza.
+- [x] Reconciliación señala divergencias y registros ausentes sin repararlos.
+- [x] Consumidores legados e interfaz de chat no alterados.
+- [x] Typecheck, `npm test`, smoke y CI 6/6 PASS reportados en [PR #8](https://github.com/iaconsultoresvitales/evia-agent-office/pull/8).
+- [x] PR #8 revisado y fusionado en `main`; sin despliegue operativo acreditado.
 
 ## Exclusiones y riesgos
 

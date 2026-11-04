@@ -1,7 +1,7 @@
 # F1-02 | Task Service y transiciones verificables
 
 **Fase:** F1, Task OS. **Base:** `main` tras PR #1, commit `0d01e2efa5279693e004d75b42a6c739d3bfc302`.  
-**Estado:** IMPLEMENTADO y PROBADO en `feature/f1-02-task-service`, [PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6). REVISIÓN DEL FUNDADOR y FUSIÓN PENDIENTES.  
+**Estado vigente (actualización 2026-11-04):** IMPLEMENTADO, PROBADO y FUSIONADO en `main` mediante [PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6), commit `f191f3f685adc5f8e59e700c7bd958d91a3dd470`; NO DESPLEGADO en la Mac operativa. La revisión/fusión pendiente era el estado histórico previo al merge.
 **Decisiones:** ADR-F003-01 (Board y persistencia JSON/JSONL) y ADR-F003-02 (Task Contract opcional), aprobadas en la conversación de desarrollo.
 
 ## Objetivo
@@ -45,7 +45,7 @@ El servicio rechaza saltos, estados obsoletos (`from` distinto del actual), depe
 - [x] Board legado sigue operando; datos persisten tras reconstruir instancia.
 - [x] `npm test` y `node scripts/smoke.mjs` PASS en CI.
 - [x] CI multiplataforma 6/6 PASS: [run 41887735589](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41887735589), commit `9c2e0dfbd10bc4d30b493a880e7e280281d83fb2`.
-- [ ] PR revisado, sin fusión automática.
+- [x] PR #6 revisado y fusionado en `main` con autorización registrada; no equivale a despliegue.
 
 ## Riesgos y siguientes tickets
 
