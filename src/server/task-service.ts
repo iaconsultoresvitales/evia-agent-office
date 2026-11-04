@@ -1,5 +1,6 @@
 import { Board, type Task, type TaskStatus } from "./board.js";
 import { parseTaskContractV1, type TaskContractV1 } from "./task-contract.js";
+import type { TaskEvidenceJournal } from "./task-evidence.js";
 
 /** F1-02: an opt-in, file-backed workflow for contracted tasks. */
 export type TaskServiceCode =
@@ -21,6 +22,8 @@ export interface ManagedTaskCreate {
   createdBy: string;
   after?: number[];
   contract: unknown;
+  operationId?: string;
+  runRef?: string;
 }
 
 export interface ManagedTaskTransition {
@@ -30,6 +33,8 @@ export interface ManagedTaskTransition {
   by: string;
   note?: string;
   evidenceRefs?: string[];
+  operationId?: string;
+  runRef?: string;
 }
 
 const transitions: Readonly<Record<TaskStatus, readonly TaskStatus[]>> = {
@@ -49,7 +54,7 @@ function managedContract(task: Task): TaskContractV1 {
 }
 
 export class TaskService {
-  constructor(private readonly board: Board) {}
+  constructor(private readonly board: Board, private readonly journal?: TaskEvidenceJournal) {}
 
   /** No actor or scope in this service implies permission to execute external tools. */
   create(input: ManagedTaskCreate): Task {
@@ -69,7 +74,10 @@ export class TaskService {
         throw new TaskServiceError("invalid_input", `Prerequisite #${id} belongs to another project`);
       }
     }
-    return this.board.addTask(owner, title, input.detail ?? "", createdBy, true, after, undefined, contract);
+    const operation = this.journal?.preflight(input.operationId, input.runRef);
+    const task = this.board.addTask(owner, title, input.detail ?? "", createdBy, true, after, undefined, contract);
+    this.journal?.recordCreate(task, createdBy, operation!, input.runRef);
+    return task;
   }
 
   transition(input: ManagedTaskTransition): { task: Task; changed: boolean } {
@@ -128,12 +136,15 @@ export class TaskService {
       throw new TaskServiceError("evidence_required", "Closing a managed task requires an evidence reference");
     }
 
+    const operation = this.journal?.preflight(input.operationId, input.runRef);
+    const addedEvidence = nextContract.evidenceRefs.filter((ref) => !contract.evidenceRefs.includes(ref));
     const updated = this.board.updateTask(task.id, {
       status: input.to,
       ...(note ? { note } : {}),
       ...(refs.length ? { contract: nextContract } : {}),
     }, by);
     if (!updated) throw new TaskServiceError("not_found", `Task #${input.id} disappeared`);
+    this.journal?.recordTransition(updated, input.from, by, operation!, addedEvidence, input.runRef);
     return { task: updated, changed: true };
   }
 }
