@@ -1,13 +1,15 @@
-# Contributing
+# Contributing to EVIA Office
+
+EVIA Office is an independent MIT-licensed adaptation of [Pixel Office](https://github.com/basriayaz/pixel-office) by Basri Ayaz. Preserve upstream notices and attribution; see [LICENSE](LICENSE) and [README.md](README.md).
 
 Thanks for helping make the office better. Small, focused pull requests are easiest to review.
 
 ## Setup
 
 ```bash
-git clone https://github.com/basriayaz/pixel-office.git
-cd pixel-office
-npm install
+git clone https://github.com/iaconsultoresvitales/evia-agent-office.git
+cd evia-agent-office
+npm ci
 npm run dev            # runs the server from src/ with tsx (no build step)
 ```
 
@@ -41,4 +43,6 @@ node scripts/check-locales.mjs
 node scripts/smoke.mjs
 ```
 
-Describe what you changed and how you tested it. Screenshots for anything visual are very welcome.
+Describe what you changed and how you tested it. Screenshots for anything visual are very welcome. Never commit local `.pixel-office/` data, agent conversations, customer information, credentials, or actual keys. Use a disposable workspace for tests.
+
+The project is local-first and does not include production authentication or a finished Director IA. Changes that expose the server remotely or grant wider tool permissions require explicit security review.
