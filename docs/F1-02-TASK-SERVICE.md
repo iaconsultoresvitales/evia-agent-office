@@ -1,7 +1,7 @@
 # F1-02 | Task Service y transiciones verificables
 
 **Fase:** F1, Task OS. **Base:** `main` tras PR #1, commit `0d01e2efa5279693e004d75b42a6c739d3bfc302`.  
-**Estado:** implementación en `feature/f1-02-task-service`, pendiente de CI y revisión.  
+**Estado:** IMPLEMENTADO y PROBADO en `feature/f1-02-task-service`, [PR #6](https://github.com/iaconsultoresvitales/evia-agent-office/pull/6). REVISIÓN DEL FUNDADOR y FUSIÓN PENDIENTES.  
 **Decisiones:** ADR-F003-01 (Board y persistencia JSON/JSONL) y ADR-F003-02 (Task Contract opcional), aprobadas en la conversación de desarrollo.
 
 ## Objetivo
@@ -38,13 +38,13 @@ El servicio rechaza saltos, estados obsoletos (`from` distinto del actual), depe
 
 ## Pruebas y aceptación
 
-- [ ] TypeScript estricto PASS.
-- [ ] Test F1-01 PASS sin regresiones.
-- [ ] Test F1-02 PASS: crear tarea contractual, bloquear ante prerrequisito, avanzar a revisión, rechazar cierre directo, cerrar con evidencia y actor autorizado.
-- [ ] Negativos PASS: actor incorrecto, transición inválida, dependencia ausente o de otro proyecto, razón obligatoria, ausencia de evidencia, estado obsoleto.
-- [ ] Board legado sigue operando; datos persisten tras reconstruir instancia.
-- [ ] `npm test` y `node scripts/smoke.mjs` PASS en CI.
-- [ ] CI multiplaforma 6/6 PASS.
+- [x] TypeScript estricto PASS.
+- [x] Test F1-01 PASS sin regresiones.
+- [x] Test F1-02 PASS: crear tarea contractual, bloquear ante prerrequisito, avanzar a revisión, rechazar cierre directo, cerrar con evidencia y actor autorizado.
+- [x] Negativos PASS: actor incorrecto, transición inválida, dependencia ausente o de otro proyecto, razón obligatoria, ausencia de evidencia, estado obsoleto.
+- [x] Board legado sigue operando; datos persisten tras reconstruir instancia.
+- [x] `npm test` y `node scripts/smoke.mjs` PASS en CI.
+- [x] CI multiplataforma 6/6 PASS: [run 41887735589](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41887735589), commit `9c2e0dfbd10bc4d30b493a880e7e280281d83fb2`.
 - [ ] PR revisado, sin fusión automática.
 
 ## Riesgos y siguientes tickets
