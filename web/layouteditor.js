@@ -23,7 +23,7 @@ const layoutEditor = (() => {
     <div class="lb-body">
       <div class="lb-actions">
         <button class="btn small" id="lbUndo" type="button" title="Ctrl+Z">↶ ${escapeHtml(t("ui.layout.undo"))}</button>
-        <button class="btn small" id="lbRotate" type="button" title="R">⟳ ${escapeHtml(t("ui.layout.rotate"))}</button>
+        <button class="btn small" id="lbRotate" type="button" title="${escapeHtml(t("ui.layout.rotateTip"))}" aria-keyshortcuts="R">⟳ ${escapeHtml(t("ui.layout.rotate"))}</button>
         <button class="btn small" id="lbCopy" type="button" title="Ctrl+D">⧉ ${escapeHtml(t("ui.layout.copy"))}</button>
         <button class="btn small danger" id="lbDelete" type="button" title="Del">🗑 ${escapeHtml(t("ui.layout.delete"))}</button>
         <button class="btn small" id="lbSell" type="button" title="${escapeHtml(t("ui.market.sellTipBar"))}">🪙 ${escapeHtml(t("ui.market.sellBar"))}</button>
@@ -219,12 +219,26 @@ const layoutEditor = (() => {
   function refreshButtons() {
     const it = selected && find(selected);
     q("lbUndo").disabled = !undo.length;
-    q("lbRotate").disabled = !(it && L.TYPES[it.type].dirs);
+    paintRotate(it);
     q("lbCopy").disabled = !it;
     q("lbDelete").disabled = !it;
     q("lbSell").disabled = !it || it.type === "desk";
     q("lbSave").disabled = saving;
-    if (!drag) say(placing && !(ghost && !ghost.res.ok) ? t("ui.market.placing", { name: pieceName(placing.key) }) : it ? t("ui.layout.selected", { name: itemName(it) + (it.type === "desk" && ownerOf(it.id) ? " · " + ownerOf(it.id) : "") }) : "");
+    if (!drag) say(placing && !(ghost && !ghost.res.ok) ? t("ui.market.placing", { name: pieceName(placing.key) }) + facingNote(placing.proto) : it ? t("ui.layout.selected", { name: itemName(it) + (it.type === "desk" && ownerOf(it.id) ? " · " + ownerOf(it.id) : "") }) + facingNote(it) : "");
+  }
+
+  // ---------- rotation: which pieces turn, where they face, and the button that says so ----------
+  // Only types with several `dirs` in web/layout.js turn (stool: 4 ways, meeting chair: 2); every other piece has a single orientation
+  // and says so instead of failing in silence. The facing arrow is drawn over every turnable piece while editing (see drawFacing).
+  const facingOf = (it) => it.dir || L.DEFAULT_DIR[it.type];
+  const facingNote = (it) => (it && L.canRotate(it.type) ? " · " + t("ui.layout.facing", { dir: t("ui.layout.dir." + facingOf(it)) }) : "");
+  function paintRotate(it) {
+    const b = q("lbRotate"), target = it || (placing ? placing.proto : null);
+    const can = !!target && L.canRotate(target.type) && !comparing && !saving && !pending;
+    b.setAttribute("aria-disabled", can ? "false" : "true");
+    b.classList.toggle("is-off", !can);
+    // nothing chosen: the plain tip. A piece that does not turn: why, by name.
+    b.title = target && !L.canRotate(target.type) ? t("ui.layout.noRotate", { name: it ? itemName(it) : pieceName(placing.key) }) : t("ui.layout.rotateTip");
   }
 
   // show the working copy in the office right away
@@ -371,10 +385,14 @@ const layoutEditor = (() => {
     ghost = null;
     refreshButtons(); renderMarket();
   }
-  function rotatePlacing() {
-    if (!placing || !L.TYPES[placing.type].dirs) return;
-    placing.proto = L.rotate(placing.proto);
+  // (a piece still in the hand: the turn applies to what is about to be placed)
+  function rotatePlacing(step = 1) {
+    if (!placing) return;
+    if (!L.canRotate(placing.type)) { say(t("ui.layout.noRotate", { name: pieceName(placing.key) }), true); sfx("error"); return; }
+    placing.proto = L.rotate(placing.proto, step);
     if (hover) ghost = ghostAt(hover);
+    refreshButtons();
+    sfx("place");
   }
   function takeDownAmbient(type) { // ambient decor is taken down from its card (nothing on the canvas to click)
     const it = items.find((x) => x.type === type);
@@ -460,13 +478,21 @@ const layoutEditor = (() => {
     if (!placed) { say(t("ui.layout.noRoom"), true); return; }
     propose(placed, false, "auto");
   }
-  function rotate() {
+  // Turn the piece placed (selected), held (being dragged) or about to be placed (step -1 = the other way). Same collision check as any edit.
+  function rotate(step = 1) {
+    if (!active || comparing || saving || pending) return;
+    if (placing) { rotatePlacing(step); return; }
     const it = selected && find(selected);
-    if (!it || !L.TYPES[it.type].dirs) return;
-    const next = put(items, L.rotate(it));
-    const res = check(next);
-    if (!res.ok) { say(why(res), true); return; }
+    if (!it) return;
+    if (!L.canRotate(it.type)) { say(t("ui.layout.noRotate", { name: itemName(it) }), true); sfx("error"); return; }
+    const turned = L.rotate(it, step), next = put(items, turned), res = check(next);
+    if (!res.ok) { say(why(res), true); sfx("error"); return; }
+    if (drag && drag.id === it.id) { // turning it while it is dragged: the dragged copy turns too, so letting go keeps the turn
+      drag.orig = L.rotate(drag.orig, step); drag.last = "";
+      if (drag.moved && ghost) { const cand = { ...drag.orig, tx: ghost.item.tx, ty: ghost.item.ty }; ghost = { item: cand, res: check(put(items, cand)) }; say(ghost.res.ok ? "" : why(ghost.res), !ghost.res.ok); return; }
+    }
     commit(next);
+    sfx("place");
   }
   function nudge(dx, dy) {
     const it = selected && find(selected);
@@ -565,7 +591,7 @@ const layoutEditor = (() => {
     try { canvas.releasePointerCapture(ev.pointerId); } catch {}
     canvas.style.cursor = "default";
     if (!cancelled && d.moved && g) {
-      const moved = g.item.tx !== d.orig.tx || g.item.ty !== d.orig.ty;
+      const before = find(d.id) || d.orig, moved = g.item.tx !== before.tx || g.item.ty !== before.ty || g.item.dir !== before.dir;
       if (g.res.ok && moved) { commit(put(items, g.item)); return; }
       if (!g.res.ok) { refreshButtons(); say(why(g.res), true); return; }
     }
@@ -594,14 +620,14 @@ const layoutEditor = (() => {
     if (placing) { // placing a piece: Enter puts it in the best free spot, R turns it, Esc lets go
       if (k === "Escape") stopPlacing();
       else if (k === "Enter") add(placing.key);
-      else if ((k === "r" || k === "R") && !mod) rotatePlacing();
+      else if ((k === "r" || k === "R") && !mod) rotatePlacing(ev.shiftKey ? -1 : 1);
       else return;
       ev.preventDefault();
       return;
     }
     if (k === "Escape") { if (drag) { release(ev, true); } else if (selected) { selected = null; refreshButtons(); } else return; }
     else if (k === "Delete" || k === "Backspace") remove();
-    else if ((k === "r" || k === "R") && !mod) rotate();
+    else if ((k === "r" || k === "R") && !mod) rotate(ev.shiftKey ? -1 : 1);
     else if ((k === "d" || k === "D") && mod) copy();
     else if ((k === "z" || k === "Z") && mod) undoLast();
     else if (k.startsWith("Arrow") && !mod) nudge(k === "ArrowLeft" ? -1 : k === "ArrowRight" ? 1 : 0, k === "ArrowUp" ? -1 : k === "ArrowDown" ? 1 : 0);
@@ -622,6 +648,19 @@ const layoutEditor = (() => {
       if (!set.has(x + 1 + "," + y)) b.fillRect(px + TILE_PX - 2, py, 2, TILE_PX);
     }
   };
+  // A small arrow on the piece's tile showing where it faces (where whoever sits there looks). Turnable pieces only.
+  const DIR_V = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  function drawFacing(b, it, strong) {
+    if (!L.canRotate(it.type)) return;
+    const v = DIR_V[facingOf(it)], cx = it.tx * TILE_PX + TILE_PX / 2, cy = it.ty * TILE_PX + TILE_PX / 2, px = -v[1], py = v[0];
+    const tip = [cx + v[0] * 11, cy + v[1] * 11], l = [cx - v[0] * 5 + px * 8, cy - v[1] * 5 + py * 8], r = [cx - v[0] * 5 - px * 8, cy - v[1] * 5 - py * 8];
+    b.save();
+    b.globalAlpha = strong ? 1 : 0.6;
+    b.beginPath(); b.moveTo(tip[0], tip[1]); b.lineTo(l[0], l[1]); b.lineTo(r[0], r[1]); b.closePath();
+    b.lineJoin = "round"; b.lineWidth = 3; b.strokeStyle = "rgba(20,21,28,.9)"; b.stroke();
+    b.fillStyle = strong ? "#ffd166" : "#f5f0e6"; b.fill();
+    b.restore();
+  }
   function drawGhost(b, t, it, ok) {
     b.save();
     b.globalAlpha = 0.8;
@@ -642,6 +681,7 @@ const layoutEditor = (() => {
     const tiles = L.tilesOf(it);
     tileFill(b, tiles, ok ? "rgba(74,222,128,.32)" : "rgba(248,113,113,.42)");
     frame(b, tiles, ok ? "#4ade80" : "#f87171");
+    drawFacing(b, it, true);
   }
   function draw(b, t) {
     if (office.theme !== editTheme) { queueMicrotask(() => { if (active && office.theme !== editTheme) { toast(tr("ui.layout.themeChanged")); cancel(); } }); return; } // (the wall decor belongs to the theme)
@@ -675,6 +715,7 @@ const layoutEditor = (() => {
       b.fillStyle = "#f5f0e6"; b.fillText(text, cx + 1, cy + 0.5, w - 6);
     }
     const it = selected && find(selected);
+    for (const x of items) if (!(drag && drag.moved && x.id === drag.id)) drawFacing(b, x, !!it && x.id === it.id);
     if (it && !(drag && drag.moved)) frame(b, L.tilesOf(it), "#ffd166");
     if (ghost) drawGhost(b, t, ghost.item, ghost.res.ok);
     else if (hover && !drag) {
@@ -755,7 +796,11 @@ const layoutEditor = (() => {
   }
 
   q("lbUndo").onclick = undoLast;
-  q("lbRotate").onclick = rotate;
+  q("lbRotate").onclick = (ev) => {
+    const it = selected && find(selected), target = it || (placing && placing.proto);
+    if (!target) { say(t("ui.layout.rotateTip")); return; }
+    rotate(ev.shiftKey ? -1 : 1);
+  };
   q("lbCopy").onclick = copy;
   q("lbDelete").onclick = remove;
   q("lbSell").onclick = () => sellItemNow(selected && find(selected));
@@ -788,7 +833,7 @@ const layoutEditor = (() => {
       toggleSound() { try { localStorage.setItem("po.market.mute", soundOn() ? "1" : "0"); } catch {} paintMute(); sfx("place"); },
       subscribe: (fn) => { listeners.push(fn); },
     },
-    open, cancel, save, add, remove, copy, rotate, undo: undoLast, commit, startPlacing, stopPlacing, get wallet() { return wallet; }, get placing() { return placing; },
+    open, cancel, save, add, remove, copy, rotate: (step) => rotate(step === -1 ? -1 : 1), undo: undoLast, commit, startPlacing, stopPlacing, get wallet() { return wallet; }, get placing() { return placing; },
     // for the ?debug panel: a random valid edit / back to the classic layout, applied to this browser only
     select(id) { selected = id; refreshButtons(); },
   };

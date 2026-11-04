@@ -18,22 +18,20 @@
 
 EVIA Office es la iniciativa de EVIA para construir un centro de mando empresarial con agentes especializados, memoria, tareas, herramientas y supervisión humana.
 
-La visión es que Salva solicite un resultado; un Director IA planifique y coordine; los agentes ejecuten tareas delimitadas; QA valide evidencia; y Salva apruebe acciones sensibles. **Ese sistema de coordinación y gobierno es una arquitectura objetivo, no una capacidad terminada en main.**
+La visión es que Salva solicite un resultado; un Director IA planifique y coordine; los agentes ejecuten tareas delimitadas; QA valide evidencia; y Salva apruebe acciones sensibles. **La coordinación integral y el gobierno de agentes siguen siendo una arquitectura objetivo, no una capacidad terminada.**
 
 ## Estado de las ramas
 
-| Rama | Función | Estado documental |
+| Rama | Función | Criterio de avance |
 | --- | --- | --- |
-| **main** | Línea base del proyecto original Pixel Office y punto de referencia del repositorio | README de EVIA y capturas; no incorpora todavía el desarrollo funcional específico de EVIA |
-| **feature/evia-foundation** | Desarrollo de la adaptación EVIA y fase de auditoría F0-02 | [README de desarrollo](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/README.md), documentación, roles y pruebas de los cambios EVIA |
+| **main** | Rama principal del repositorio | Recibe incrementos tras revisión y QA; fusionar código no actualiza automáticamente la instalación local |
+| **feature/evia-foundation** | Rama de desarrollo e integración EVIA | Reúne localización, roles, UX y F1-01 Task Contract; los siguientes incrementos se desarrollan por ticket y PR |
 
-La rama de desarrollo incluye cambios como localización al español, roles iniciales de EVIA, copia de respuestas y rotación de mobiliario. Su disponibilidad y resultados deben validarse en esa rama y en la instalación local antes de considerarlos liberados.
-
-La base original documenta oficina visual, perfiles de agentes, conversaciones, memoria, tablero, reuniones, personalización y conexiones a proveedores. La presencia de una función o conector en la interfaz **no acredita** que esté configurado, autorizado, probado o listo para datos de clientes.
+La base de Pixel Office aporta oficina visual, perfiles, conversaciones, memoria, tablero y personalización. La presencia de un conector o una función en la interfaz **no acredita** que esté configurado, autorizado o validado para datos de clientes. El estado de cada fase se comprueba con sus commits, pruebas y PR.
 
 ## Capturas de EVIA Office
 
-Estas imágenes corresponden a la instalación personalizada de EVIA y muestran trabajo de la rama de desarrollo. **No representan una validación funcional de main.**
+Estas imágenes documentan la instalación personalizada de EVIA y no sustituyen las pruebas funcionales de cada incremento.
 
 | Lauren, inteligencia de mercado | Edición de la oficina |
 | --- | --- |
@@ -64,14 +62,33 @@ npm run dev
 
 Las instrucciones específicas de la instalación de Salva, con código y datos persistentes separados, se documentan en el [README de feature/evia-foundation](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/README.md). No se deben versionar directorios de datos de agentes, conversaciones, respaldos, credenciales ni información de clientes.
 
+### Instalación local de Salva
+
+En la Mac operativa, el código y los datos están separados:
+
+| Ruta | Uso |
+| --- | --- |
+| `~/EVIA/agent-office/code/` | Código fuente |
+| `~/EVIA/agent-office/workspace/.pixel-office/` | Configuración, memoria, tareas y conversaciones |
+| `~/EVIA/agent-office/backups/` | Respaldos |
+
+Inicio de referencia:
+
+~~~bash
+node "$HOME/EVIA/agent-office/code/bin/pixel-office.js" --dir "$HOME/EVIA/agent-office/workspace" --port 4747
+~~~
+
+Abrir [http://127.0.0.1:4747](http://127.0.0.1:4747). No se debe usar el directorio de datos operativos para ejecutar pruebas de desarrollo.
+
 ## Dirección de desarrollo
 
 | Etapa | Objetivo | Situación |
 | --- | --- | --- |
-| **F0-02** | Auditar el estado real (AS-IS) y construir una matriz de capacidades con evidencia | En trabajo; no se presupone completada |
-| **F0-03** | Definir arquitectura objetivo, contratos, riesgos y permisos | Planeada |
-| **F1 a F5** | Task OS, Director IA, aislamiento, QA y políticas de aprobación | Objetivo de desarrollo |
-| **F6 a F8** | Integraciones controladas, observabilidad, pilotos y productización | Objetivo posterior |
+| **F0-02** | Auditoría AS-IS y matriz de capacidades | Documentación de auditoría preparada |
+| **F0-03** | Arquitectura, contratos, decisiones y permisos | Diseño TO-BE preparado; ADR-F003-01 y 02 aceptados |
+| **F1-01** | Task Contract v1 compatible con el tablero | Implementado, seis checks PASS y suite completa `npm test` PASS en CI ([PR #5](https://github.com/iaconsultoresvitales/evia-agent-office/pull/5)) |
+| **F1-02 a F5** | Task Service, Director IA, aislamiento, QA y aprobaciones | Incrementos posteriores sujetos a tickets y pruebas |
+| **F6 a F8** | Integraciones, observabilidad, pilotos y productización | Objetivo posterior |
 
 No se promete sincronización automática de historiales de ChatGPT, Claude Code o Codex ni acceso universal a servicios externos. Toda integración depende de interfaces oficiales, permisos y pruebas.
 
@@ -87,12 +104,14 @@ El almacenamiento local de conversaciones no implica que la inferencia de los mo
 
 ## Documentación de la adaptación
 
-Los documentos siguientes residen actualmente en la rama de desarrollo:
+Los documentos siguientes forman parte de la adaptación EVIA:
 
-- [Fundamentos y fases](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/docs/EVIA_FOUNDATION.md)
-- [Línea base de seguridad](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/docs/EVIA_SECURITY.md)
-- [Roles iniciales de EVIA](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/evia/roles/README.md)
-- [UX: copiar respuestas y rotar muebles](https://github.com/iaconsultoresvitales/evia-agent-office/blob/feature/evia-foundation/docs/EVIA_UX_COPIAR_Y_ROTACION.md)
+- [Fundamentos y fases](docs/EVIA_FOUNDATION.md)
+- [Línea base de seguridad](docs/EVIA_SECURITY.md)
+- [Roles iniciales de EVIA](evia/roles/README.md)
+- [UX: copiar respuestas y rotar muebles](docs/EVIA_UX_COPIAR_Y_ROTACION.md)
+- [F1-01: Task Contract v1](docs/F1-01-TASK-CONTRACT.md)
+- [F0-02: Auditoría AS-IS](https://github.com/iaconsultoresvitales/evia-agent-office/blob/docs/f0-02-as-is-review-20261104/docs/F0-02-AS-IS.md)
 
 ## Origen, créditos y licencia
 

@@ -16,6 +16,15 @@ try {
   if (!ok) throw new Error("server did not answer\n" + log);
   const opts = await (await fetch(`http://127.0.0.1:${port}/api/options`)).json();
   if (!opts.locale || !Array.isArray(opts.offices)) throw new Error("bad /api/options");
+  const eviaResponse = await fetch(`http://127.0.0.1:${port}/api/evia/roles`);
+  if (!eviaResponse.ok) throw new Error("EVIA roles API failed");
+  const evia = await eviaResponse.json();
+  if (!Array.isArray(evia.roles) || evia.roles.length !== 4 ||
+      evia.roles.some((role) => role.permissionMode !== "plan" || !role.prompt)) {
+    throw new Error("bad /api/evia/roles");
+  }
+  const hirePage = await (await fetch(`http://127.0.0.1:${port}/hire.html`)).text();
+  if (!hirePage.includes('id="eviaPresets"')) throw new Error("hire page has no EVIA role picker");
   const html = await (await fetch(`http://127.0.0.1:${port}/`)).text();
   if (!html.includes("<canvas")) throw new Error("index.html has no canvas");
   const emps = await (await fetch(`http://127.0.0.1:${port}/api/offices/${opts.offices[0].id}/employees`)).json();

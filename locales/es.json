@@ -1,0 +1,202 @@
+{
+  "name": "Español",
+  "rooms": {
+    "kitchen": "COCINA",
+    "office": "OFICINA",
+    "meeting": "SALA DE REUNIONES",
+    "lounge": "DESCANSO",
+    "archive": "ARCHIVO"
+  },
+  "status": {
+    "idle": "disponible",
+    "working": "trabajando",
+    "waiting": "esperando aprobación",
+    "error": "error",
+    "sick": "descansando"
+  },
+  "server": {
+    "defaultPrompt": "Eres {name}, responsable de {role}.",
+    "defaultRole": "Colaborador",
+    "memoryHeader": "# {name} · Memoria\n\nHechos duraderos, reglas y preferencias enseñados por el usuario. {name} mantiene este archivo actualizado.\n"
+  },
+  "ui": {
+    "title": "EVIA Agent Office",
+    "brand": "EVIA OFFICE",
+    "hireButton": "+ Nuevo agente",
+    "offlineBanner": "Sin conexión con el servidor",
+    "legend": {
+      "idle": "Disponible",
+      "working": "Trabajando",
+      "waiting": "Requiere aprobación",
+      "error": "Error",
+      "sick": "Descansando"
+    },
+    "status": {
+      "list": "Vista de lista",
+      "chips": "Volver a las fichas",
+      "noDesk": "+{n} sin escritorio",
+      "noDeskTag": "sin escritorio",
+      "noDeskTip": "Los agentes adicionales trabajan normalmente, aunque no se dibujan en la oficina. Usa la lista para verlos.",
+      "noTask": "sin tarea",
+      "contextTip": "Contexto que el modelo relee en cada paso",
+      "costTip": "Costo de hoy"
+    },
+    "tools": {
+      "button": "Herramientas",
+      "layout": "Editar oficina",
+      "layoutSub": "Mover muebles y decoración",
+      "shop": "Tienda de muebles",
+      "shopSub": "Comprar y vender decoración",
+      "integrations": "Integraciones",
+      "integrationsSub": "Conectar servicios externos",
+      "skills": "Habilidades",
+      "skillsSub": "Capacidades de tus agentes"
+    },
+    "strip": {
+      "today": "hoy",
+      "stopped": "detenido",
+      "inboxTip": "Pendiente de tu atención",
+      "activityTip": "Actividad",
+      "spendTip": "Costo de hoy. Ver presupuesto y límites.",
+      "capReached": "Se alcanzó el límite diario. El trabajo automático está pausado."
+    },
+    "chat": {
+      "placeholder": "Asigna una tarea o haz una pregunta…",
+      "hint": "Enter para enviar · Shift+Enter para otra línea · Esc para cerrar",
+      "offlineNote": "No hay conexión con el servidor. El mensaje quedará aquí hasta que vuelva la conexión.",
+      "profile": "Perfil, memoria y habilidades",
+      "stop": "Detener tarea",
+      "reset": "Reiniciar conversación (conservar memoria)",
+      "close": "Cerrar",
+      "today": "Hoy",
+      "older": "Ver mensajes anteriores",
+      "olderFailed": "No se pudieron cargar los mensajes",
+      "copy": "Copiar",
+      "copyTip": "Copiar la respuesta completa (Markdown)",
+      "copied": "Copiado",
+      "copyFailed": "No se pudo copiar. Selecciona el texto y cópialo manualmente.",
+      "actions": "{n} acciones",
+      "actions_one": "{n} acción",
+      "answer": "Responder",
+      "skip": "Omitir"
+    },
+    "layout": {
+      "rotate": "Girar",
+      "rotateTip": "Girar (R) · en sentido contrario (Mayús+R)",
+      "noRotate": "{name} no se puede girar: solo tiene una orientación",
+      "facing": "Orientado hacia {dir}",
+      "dir": {
+        "up": "arriba",
+        "down": "abajo",
+        "left": "la izquierda",
+        "right": "la derecha"
+      }
+    },
+    "board": {
+      "button": "Tablero",
+      "buttonTip": "Tareas y conocimiento compartido",
+      "title": "Tablero",
+      "tabTasks": "Tareas",
+      "tabNotes": "Notas compartidas",
+      "status": {
+        "todo": "Por hacer",
+        "doing": "En curso",
+        "review": "En revisión",
+        "done": "Terminada",
+        "blocked": "Bloqueada"
+      },
+      "newTask": "Nueva tarea",
+      "taskTitle": "Título",
+      "taskDetail": "Resultado esperado, alcance y dependencias",
+      "owner": "Responsable",
+      "add": "Agregar al tablero",
+      "addHint": "Agregar una tarea no la ejecuta. Iníciala cuando quieras autorizar el trabajo.",
+      "start": "Iniciar",
+      "startTip": "Asignar esta tarea al responsable",
+      "restart": "Reintentar",
+      "markDone": "Terminar",
+      "reopen": "Reabrir",
+      "delete": "Eliminar"
+    },
+    "meeting": {
+      "button": "Reunión",
+      "buttonTip": "Convocar reunión",
+      "startTitle": "Convocar reunión",
+      "topic": "Tema",
+      "topicPh": "Ej. Prioridades semanales",
+      "participants": "Participantes",
+      "all": "Todos",
+      "none": "Nadie",
+      "busy": "ocupado",
+      "busyLabel": "Agentes trabajando",
+      "busyWait": "se incorporan al terminar",
+      "busyInterrupt": "interrumpir y convocar",
+      "start": "Iniciar reunión",
+      "cancel": "Cancelar",
+      "noOne": "Selecciona al menos un participante",
+      "running": "Ya hay una reunión activa",
+      "title": "Reunión",
+      "onTheWay": "en camino"
+    },
+    "settings": {
+      "btn": "Configuración",
+      "title": "Configuración",
+      "close": "Cerrar",
+      "saved": "Guardado",
+      "loading": "Cargando…",
+      "tabs": {
+        "general": "General",
+        "offices": "Oficinas",
+        "office": "Esta oficina",
+        "sessions": "Sesiones",
+        "models": "Modelos",
+        "server": "Servidor"
+      },
+      "lang": "Idioma",
+      "langHint": "La interfaz cambia al instante; los agentes ocupados actualizan las instrucciones al terminar su tarea.",
+      "notify": "Notificaciones",
+      "notifyHint": "Avisar cuando un agente responde o pide permiso",
+      "officesHint": "Cada oficina tiene sus agentes, tablero, costos y carpeta de trabajo."
+    },
+    "profile": {
+      "tabs": {
+        "profile": "Perfil",
+        "memory": "Memoria",
+        "skills": "Habilidades",
+        "history": "Historial",
+        "settings": "Configuración"
+      },
+      "appearance": "Apariencia",
+      "identity": "Identidad y puesto",
+      "name": "Nombre",
+      "role": "Puesto",
+      "prompt": "Instrucciones del sistema",
+      "save": "Guardar",
+      "workdir": "Carpeta de trabajo:",
+      "defaultModel": "modelo predeterminado"
+    },
+    "hire": {
+      "crumb": "Contratar",
+      "back": "Volver a la oficina",
+      "cardTitle": "FICHA DE NUEVO AGENTE",
+      "noName": "Sin nombre",
+      "noRole": "Sin puesto",
+      "step1": "Apariencia",
+      "step1Desc": "Diseña el personaje que recorrerá la oficina.",
+      "step2": "Identidad y puesto",
+      "step2Desc": "Define quién es, qué hace y cómo trabaja.",
+      "step3": "Configuración",
+      "step3Desc": "Modelo, esfuerzo y permisos.",
+      "name": "Nombre",
+      "namePh": "Ej. Clara",
+      "role": "Puesto",
+      "rolePh": "Ej. Analista competitivo",
+      "presets": "Puestos predefinidos",
+      "presetsHint": "Al elegir uno se completa la descripción, que puedes editar."
+    },
+    "lang": {
+      "title": "Idioma",
+      "changed": "Idioma actualizado. Los agentes lo aplicarán en su siguiente intervención."
+    }
+  }
+}

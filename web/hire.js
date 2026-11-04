@@ -52,7 +52,44 @@ for (const p of PRESETS) {
 buildChoiceCards($("modelCards"), modelItems(), sel.model, (v) => { sel.model = v; updateCard(); });
 buildSegment($("effortSeg"), effortItems(), sel.effort, (v) => { sel.effort = v; $("effortHint").textContent = EFFORT_INFO[v]?.desc || ""; updateCard(); });
 $("effortHint").textContent = EFFORT_INFO[sel.effort]?.desc || "";
-buildChoiceCards($("permCards"), permItems(), sel.perm, (v) => { sel.perm = v; updateCard(); });
+const permPicker = buildChoiceCards($("permCards"), permItems(), sel.perm, (v) => { sel.perm = v; updateCard(); });
+
+// EVIA presets are snapshots of the canonical agent.md files served by the local backend.
+// Clicking only fills the form: hiring, provider setup and execution remain human decisions.
+let eviaAutofilledName = "";
+async function loadEviaPresets() {
+  try {
+    const { roles } = await api("GET", "/api/evia/roles");
+    if (!Array.isArray(roles)) throw new Error("Invalid role catalog");
+    const host = $("eviaPresets");
+    for (const role of roles) {
+      if (!role || !role.name || !role.role || !role.prompt || role.permissionMode !== "plan") continue;
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "preset";
+      b.textContent = role.name;
+      b.title = role.role;
+      b.onclick = () => {
+        document.querySelectorAll(".preset").forEach((x) => x.classList.toggle("on", x === b));
+        const name = $("name");
+        if (!name.value.trim() || name.value.trim() === eviaAutofilledName) {
+          name.value = role.name;
+          eviaAutofilledName = role.name;
+        }
+        $("role").value = role.role;
+        $("prompt").value = role.prompt;
+        sel.perm = "plan";
+        permPicker.set("plan");
+        if (/^#[0-9a-f]{6}$/i.test(role.color)) editor.set({ top: role.color });
+        updateCard();
+      };
+      host.appendChild(b);
+    }
+  } catch (err) {
+    $("eviaPresetsStatus").textContent = t("ui.hire.error", { message: err.message });
+  }
+}
+void loadEviaPresets();
 if (!officeInfo.employeesDir && !PO.offices?.length) toast(t("ui.hire.noDir"));
 updateCard();
 

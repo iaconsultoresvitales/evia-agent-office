@@ -22,6 +22,7 @@ import { CLAUDE_MODELS, PROVIDERS, activeModels, isActiveModel, initProviders, p
 import { createGuard, isLoopbackHost } from "./security.js";
 import { acquireLock } from "./lock.js";
 import { writeFileAtomicSync } from "./fsutil.js";
+import { listEviaRolePresets } from "./evia-roles.js";
 import { Ledger, dayKey, type Cap } from "./ledger.js";
 import { initPrices, pricesFile, customPrices, parsePrices, saveCustomPrices, DEFAULT_PRICES } from "./prices.js";
 import { EventLog, type OfficeEvent } from "./events.js";
@@ -736,6 +737,9 @@ app.post("/api/shutdown", (_req, res) => {
   setTimeout(() => void shutdown(), 150);
 });
 app.get("/api/offices", (_req, res) => res.json([...offices.values()].map((o) => ({ ...officeInfo(o), employees: roster(o) }))));
+
+// Versioned EVIA hiring presets: a read-only catalog, not an execution endpoint.
+app.get("/api/evia/roles", (_req, res) => res.json({ roles: listEviaRolePresets() }));
 
 // ---- office management (persisted to config.json, applied live) ----
 const officesPayload = () => ({ type: "offices", multiOffice: settings.multiOffice, offices: [...offices.values()].map((o) => ({ ...officeInfo(o), employees: roster(o) })) });
