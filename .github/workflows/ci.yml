@@ -49,6 +49,10 @@ jobs:
         run: node scripts/test-director-sol-fixture-flow.mjs
       - name: F2-02C/D offline Director gateway limits and explicit fallback (no inference)
         run: node scripts/test-director-offline-gateway.mjs
+      - name: F2-03A local read-only synthetic Director preview (no accounts)
+        run: |
+          node --check web/director-preview.js
+          node scripts/test-director-preview-ui.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)

@@ -1,0 +1,52 @@
+/* F2-03A: opt-in synthetic Director preview, isolated from Board and chat. */
+.director-card { width: min(880px, 96vw); padding: 22px 24px; max-height: min(90vh, 960px); overflow-y: auto; }
+.director-head { gap: 12px; align-items: flex-start; }
+.director-title-wrap { min-width: 0; flex: 1; }
+.director-title-wrap h2 { font-family: "Silkscreen", monospace; color: var(--text); font-size: 20px; margin: 6px 0 0; }
+.director-kicker { color: var(--muted); font-size: 10px; letter-spacing: 2px; }
+.director-tag { background: rgba(255, 209, 102, .12); border: 1px solid var(--accent); color: var(--accent); font-size: 10px; letter-spacing: 1px; padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
+.director-intro { color: var(--muted); line-height: 1.7; margin: 10px 0 16px; }
+.director-guard { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 12px; background: var(--bg); overflow: hidden; }
+.director-guard > div { display: grid; gap: 6px; padding: 13px; border-right: 1px solid var(--line); }
+.director-guard > div:last-child { border-right: 0; }
+.director-guard small, .director-objective small, .director-section-label { color: var(--muted); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+.director-guard strong { font-size: 12px; color: var(--accent); }
+.director-guard span { color: var(--muted); font-size: 10px; }
+.director-state { margin: 14px 0; padding: 9px 12px; border-left: 3px solid var(--muted); background: var(--bg); font-size: 12px; }
+.director-state[data-kind="ok"] { border-color: var(--working); }
+.director-state[data-kind="warn"] { border-color: var(--waiting); }
+.director-state[data-kind="error"] { border-color: var(--error); color: var(--error); }
+.director-objective { border: 1px solid var(--line); border-radius: 9px; padding: 13px; }
+.director-objective p { margin: 8px 0 0; line-height: 1.6; }
+.director-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 13px 0 15px; font-size: 11px; color: var(--muted); }
+.director-flow span { padding: 7px 9px; border: 1px dashed var(--line); border-radius: 6px; }
+.director-flow span:last-child { border-color: var(--error); color: var(--error); }
+.director-flow i { font-style: normal; color: var(--accent); }
+.director-tasks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.director-task { padding: 14px; background: var(--bg); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 10px; min-width: 0; }
+.director-task-head { display: flex; gap: 12px; align-items: flex-start; }
+.director-index { color: var(--accent); border: 1px solid var(--line); padding: 6px; font-family: "Silkscreen", monospace; border-radius: 6px; }
+.director-task-name { display: grid; gap: 5px; min-width: 0; }
+.director-task-name strong { font-size: 13px; line-height: 1.4; }
+.director-task-name small { color: var(--accent); }
+.director-task-objective, .director-deps { color: var(--muted); line-height: 1.6; overflow-wrap: anywhere; }
+.director-deps { font-size: 11px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.director-task-list { margin-top: 12px; }
+.director-task-list ul { padding-left: 19px; line-height: 1.6; margin: 7px 0; }
+.director-task-list li { overflow-wrap: anywhere; padding-bottom: 4px; }
+.director-limits { margin-top: 12px; color: var(--muted); font-size: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+.director-footer { margin-top: 17px; border-top: 1px solid var(--line); padding-top: 13px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; }
+.director-footer small { flex: 1 1 230px; max-width: 440px; color: var(--muted); line-height: 1.6; }
+.director-actions { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+#directorModal [hidden] { display: none; }
+@media (max-width: 700px) {
+  .director-card { padding: 15px; }
+  .director-title-wrap h2 { font-size: 16px; }
+  .director-tag { white-space: normal; }
+  .director-guard { grid-template-columns: 1fr; }
+  .director-guard > div { border-right: 0; border-bottom: 1px solid var(--line); }
+  .director-guard > div:last-child { border-bottom: 0; }
+  .director-tasks { grid-template-columns: 1fr; }
+  .director-actions { width: 100%; }
+  .director-actions .btn { flex: 1; justify-content: center; }
+}

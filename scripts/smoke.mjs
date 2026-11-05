@@ -23,10 +23,23 @@ try {
       evia.roles.some((role) => role.permissionMode !== "plan" || !role.prompt)) {
     throw new Error("bad /api/evia/roles");
   }
+  const directorResponse = await fetch(`http://127.0.0.1:${port}/api/evia/director/fixture`);
+  if (!directorResponse.ok) throw new Error("synthetic Director preview API failed");
+  const director = await directorResponse.json();
+  if (director.kind !== "director-preview-fixture" || director.mode !== "synthetic-only"
+    || director.accountConnected !== false || director.persisted !== false
+    || director.result?.modelInvoked !== false || director.result?.inferenceEnabled !== false
+    || director.result?.taskRegistrationAllowed !== false || director.result?.boardWrite !== false
+    || director.result?.plan?.tasks?.length !== 2) {
+    throw new Error("synthetic Director preview contract failed");
+  }
   const hirePage = await (await fetch(`http://127.0.0.1:${port}/hire.html`)).text();
   if (!hirePage.includes('id="eviaPresets"')) throw new Error("hire page has no EVIA role picker");
   const html = await (await fetch(`http://127.0.0.1:${port}/`)).text();
   if (!html.includes("<canvas")) throw new Error("index.html has no canvas");
+  if (!html.includes('id="directorModal"') || !html.includes('src="director-preview.js"')) {
+    throw new Error("Director preview UI not mounted");
+  }
   const emps = await (await fetch(`http://127.0.0.1:${port}/api/offices/${opts.offices[0].id}/employees`)).json();
   if (emps.length !== 3) throw new Error(`expected 3 sample employees, got ${emps.length}`);
   const older = await fetch(`http://127.0.0.1:${port}/api/offices/${opts.offices[0].id}/employees/${emps[0].id}/history?limit=5`);
