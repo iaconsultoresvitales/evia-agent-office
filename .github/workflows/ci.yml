@@ -53,6 +53,8 @@ jobs:
         run: |
           node --check web/director-preview.js
           node scripts/test-director-preview-ui.mjs
+      - name: F3-01A project/client scope harness (no data access)
+        run: node scripts/test-project-scope-harness.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
