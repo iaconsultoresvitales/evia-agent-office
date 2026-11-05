@@ -34,7 +34,7 @@ Verify the security-critical identity checks in repeatable tests before investin
 
 ## Acceptance and rollback
 
-- [ ] Focal test, typecheck, full npm test, build and CI 6/6 PASS.
+- [x] Focal test, typecheck, full npm test, build and CI 6/6 PASS (GitHub Actions run #55, commit `61a6892d`).
 - [ ] Diff and security boundary reviewed by Salva.
 - [ ] Merge authorized separately; deployment and account connection are not authorized.
 
