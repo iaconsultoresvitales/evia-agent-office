@@ -39,6 +39,8 @@ jobs:
         run: node scripts/test-task-os-integration.mjs
       - name: F2-01 deterministic Director IA plan-only and crash recovery
         run: node scripts/test-director-plan.mjs
+      - name: F2-02A offline Sign in with ChatGPT contract (no accounts)
+        run: node scripts/test-siwc-auth-offline.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
