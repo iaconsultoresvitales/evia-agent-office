@@ -41,6 +41,8 @@ jobs:
         run: node scripts/test-director-plan.mjs
       - name: F2-02A offline Sign in with ChatGPT contract (no accounts)
         run: node scripts/test-siwc-auth-offline.mjs
+      - name: F2-02A1 offline OIDC cryptographic fixtures (no accounts)
+        run: node scripts/test-siwc-oidc-fixture.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
