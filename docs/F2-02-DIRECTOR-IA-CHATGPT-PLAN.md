@@ -2,10 +2,12 @@
 
 **Proyecto:** EVIA Office OS  
 **Fecha de diseño:** 4 de noviembre de 2026  
-**Estado:** DISEÑO DOCUMENTAL; NO IMPLEMENTADO, NO PROBADO, NO FUSIONADO, NO DESPLEGADO  
+**Estado:** DISEÑO APROBADO; INFERENCIA GPT-6.1 SOL NO IMPLEMENTADA NI PROBADA; SIN DESPLIEGUE  
 **Rama objetivo de documentacion:** `docs/f2-02-siwc-gpt-6-1-sol-design`  
-**Decisiones de base:** ADR-F003-03 y ADR-F003-04 ACCEPTED. ADR-F202-01 propuesto.  
+**Decisiones de base:** ADR-F003-03, ADR-F003-04 y ADR-F202-01 ACCEPTED.  
 **Autorización de Salva:** diseñar F2-02 usando GPT-6.1 Sol y Sign in with ChatGPT, sin clave API de pago, sin comprar créditos adicionales y sin implementar todavía. La instrucción posterior "Ok avanza" se interpreta limitadamente como autorización de formalización documental, nunca como autorización para autenticar cuentas, programar funciones, probar inferencia real, fusionar o desplegar.
+
+> **Adenda de continuidad (4 de noviembre de 2026):** Salva aceptó ADR-F202-01 y autorizó fusionar los PR #16 y #17, ambos sujetos a revisión y CI. F2-02A es únicamente un arnés de OAuth sintético (CI 6/6 PASS, [run #49](https://github.com/iaconsultoresvitales/evia-agent-office/actions/runs/41951217032)); no autentica, no consulta modelos y no conecta cuentas. La implementación del Director IA con GPT-6.1 Sol, OAuth real y cualquier despliegue continúan fuera de alcance hasta nuevas autorizaciones.
 
 ## 1. Resultado empresarial y frontera
 
@@ -152,8 +154,8 @@ Fuente comercial: [descripcion oficial SIWC](https://developers.openai.com/siwc/
 - [x] Objetivo, limites, fuentes y politica economica definidos documentalmente.
 - [x] Arquitectura incremental compatible con F2-01 y F1.
 - [x] Tickets F2-02A/B/C/D, pruebas, riesgos, dependencias y rollback conceptual.
-- [ ] ADR-F202-01 aceptado por Salva.
-- [ ] Implementacion autorizada por Salva mediante decision separada.
+- [x] ADR-F202-01 aceptado por Salva.
+- [x] Solo arnés offline F2-02A autorizado en decisión separada; implementación con cuentas o modelos reales no autorizada.
 - [ ] OAuth, modelos, consumo, CI y flujo real comprobados.
 - [ ] Revisión de diff documental y PR, fusion y deploy autorizados por separado.
 
