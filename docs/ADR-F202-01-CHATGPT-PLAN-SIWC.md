@@ -1,8 +1,8 @@
 # ADR-F202-01 | Director IA model-only con GPT-6.1 Sol y Sign in with ChatGPT
 
-**Estado:** PROPOSED, pendiente de aceptacion tecnica y de implementacion por Salvador Villarreal Gomez.  
+**Estado:** ACCEPTED por Salvador Villarreal Gómez el 4 de noviembre de 2026. Salva autorizó por separado fusionar los PR #16 y #17, manteniendo prohibidas la conexión de cuentas y el despliegue.  
 **Fecha:** 4 de noviembre de 2026.  
-**Ambito:** F2-02, diseño documental. No implica implementacion, OAuth, consumo de plan/creditos, merge ni despliegue.  
+**Ambito:** F2-02, decisión de arquitectura. La autorización de merge alcanza únicamente los PR documentales y el arnés offline; no autoriza OAuth real, consumo de plan/créditos ni despliegue.  
 **Decisiones previas:** ADR-F003-03, ADR-F003-04 ACCEPTED.
 
 ## Contexto
@@ -46,9 +46,9 @@ Fuentes oficiales: [SIWC overview](https://developers.openai.com/siwc/token-shar
 
 ## Aceptacion de la decision (no de implementacion)
 
-- [ ] Salva acepta esta seleccion tecnica y el alcance exacto de F2-02.
-- [ ] Salva autoriza separadamente F2-02A y, mas adelante, prueba OAuth con fixtures.
+- [x] Salva acepta esta selección técnica y el alcance exacto de F2-02.
+- [x] Salva autorizó por separado el arnés F2-02A offline y su PR #17. La prueba OAuth con una cuenta real sigue pendiente.
 - [ ] Verificar configuracion de gasto/creditos antes de habilitar inferencia.
-- [ ] No merge, no deploy, no datos reales ni herramientas hasta autorizaciones y fases correspondientes.
+- [x] Merge limitado a PR #16 y #17 autorizado; sin deploy, sin datos reales, sin herramientas y sin conexión de cuentas.
 
 **Documento rector:** [F2-02 Director IA con ChatGPT Plan](F2-02-DIRECTOR-IA-CHATGPT-PLAN.md).
