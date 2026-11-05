@@ -13,6 +13,8 @@ const oauthResource = "https://api.openai.com/v1";
 const oauthScopes = "openid profile email offline_access resource.invoke chatgpt.tokens.use.direct";
 const uuidHostId = /^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const maxLifetimeMs = 5 * 60 * 1000;
+const maxCallbackLength = 8192;
+const allowedCallbackParams = new Set(["state", "code", "client_id", "scope", "error", "error_description"]);
 
 interface PendingState {
   state: string;
@@ -111,11 +113,19 @@ export function inspectSiwcCallbackForHarnessOnly(
   const pending = pendingAttempts.get(draft as SiwcOfflineDraftV1);
   if (!pending) throw new Error("Unknown OAuth attempt");
   if (pending.used) throw new Error("OAuth attempt already consumed");
-  if (requiredTimestamp(now) > pending.expiresAt) throw new Error("OAuth attempt expired");
+  if (requiredTimestamp(now) >= pending.expiresAt) throw new Error("OAuth attempt expired");
+  if (typeof callback !== "string" || callback.length > maxCallbackLength) {
+    throw new Error("Invalid OAuth callback length");
+  }
   const url = new URL(callback);
   const expected = new URL(pending.callbackUrl);
-  if (url.protocol !== expected.protocol || url.host !== expected.host || url.pathname !== expected.pathname || url.hash) {
+  if (url.protocol !== expected.protocol || url.host !== expected.host || url.pathname !== expected.pathname
+    || url.username || url.password || url.hash) {
     throw new Error("OAuth callback target mismatch");
+  }
+  for (const key of url.searchParams.keys()) {
+    if (!allowedCallbackParams.has(key)) throw new Error("Unexpected OAuth callback parameter");
+    if (url.searchParams.getAll(key).length !== 1) throw new Error(`Duplicate OAuth callback parameter: ${key}`);
   }
   const returnedState = singleQueryParam(url, "state");
   if (!returnedState || !sameOpaqueValue(pending.state, returnedState)) {
@@ -124,12 +134,13 @@ export function inspectSiwcCallbackForHarnessOnly(
   const error = singleQueryParam(url, "error");
   const code = singleQueryParam(url, "code");
   const clientId = singleQueryParam(url, "client_id");
-  if (error) {
+  if (url.searchParams.has("error")) {
     if (error !== "access_denied" || code || clientId) throw new Error("Invalid OAuth error callback");
     pending.used = true;
     return Object.freeze({ kind: "siwc-offline-callback-inspection", status: "denied",
       authenticated: false, inferenceEnabled: false });
   }
+  if (url.searchParams.has("error_description")) throw new Error("Unexpected OAuth error description");
   if (!code || !code.trim()) throw new Error("Missing OAuth authorization code");
   if (!clientId || !/^oaiapp_[A-Za-z0-9_-]{3,128}$/.test(clientId)) {
     throw new Error("Missing or invalid dynamically issued OAuth client ID");
