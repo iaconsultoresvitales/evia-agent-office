@@ -47,6 +47,8 @@ jobs:
         run: node scripts/test-director-response-fixture.mjs
       - name: F2-02B2 GPT-6.1 Sol fixture proposal and review (no inference)
         run: node scripts/test-director-sol-fixture-flow.mjs
+      - name: F2-02C/D offline Director gateway limits and explicit fallback (no inference)
+        run: node scripts/test-director-offline-gateway.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
