@@ -105,7 +105,10 @@ export function verifySiwcOidcFixture(input: SiwcOidcFixtureInputV1): SiwcOidcFi
   }
   let signatureValid = false;
   try {
-    const pub = createPublicKey({ key: key as JsonWebKey, format: "jwk" });
+    // Node's crypto.JsonWebKey has an index signature unlike the DOM JsonWebKey.
+    // Construct a minimal, public-only JWK with a compatible explicit type.
+    const publicJwk: Record<string, string> = { kty: key.kty, n: key.n, e: key.e };
+    const pub = createPublicKey({ key: publicJwk, format: "jwk" });
     signatureValid = verify("RSA-SHA256", Buffer.from(`${headerSegment}.${payloadSegment}`), pub, signature);
   } catch { throw new Error("Invalid fixture JWT signature"); }
   if (!signatureValid) throw new Error("Invalid fixture JWT signature");
