@@ -29,7 +29,7 @@
     "start": "node bin/pixel-office.js",
     "dev": "tsx src/server/index.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node scripts/test-retry.mjs && node scripts/test-archive.mjs && node scripts/test-digest.mjs && node scripts/test-progress.mjs && node scripts/test-layout.mjs && node scripts/test-furniture-rotation.mjs && node scripts/test-chat-copy.mjs && node scripts/test-market.mjs && node scripts/test-integrations.mjs && node scripts/test-skills.mjs && node scripts/test-evia-locale.mjs && node scripts/test-evia-roles.mjs && node scripts/test-task-contract.mjs && node scripts/test-task-service.mjs && node scripts/test-task-evidence.mjs && node scripts/test-task-recovery.mjs && node scripts/test-task-os-integration.mjs && node --check web/hire.js && node --check web/copy.js"
+    "test": "npm run build && node scripts/test-retry.mjs && node scripts/test-archive.mjs && node scripts/test-digest.mjs && node scripts/test-progress.mjs && node scripts/test-layout.mjs && node scripts/test-furniture-rotation.mjs && node scripts/test-chat-copy.mjs && node scripts/test-market.mjs && node scripts/test-integrations.mjs && node scripts/test-skills.mjs && node scripts/test-evia-locale.mjs && node scripts/test-evia-roles.mjs && node scripts/test-task-contract.mjs && node scripts/test-task-service.mjs && node scripts/test-task-evidence.mjs && node scripts/test-task-recovery.mjs && node scripts/test-task-os-integration.mjs && node scripts/test-director-plan.mjs && node --check web/hire.js && node --check web/copy.js"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.3.283",
