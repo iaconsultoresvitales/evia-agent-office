@@ -23,6 +23,7 @@ import { createGuard, isLoopbackHost } from "./security.js";
 import { acquireLock } from "./lock.js";
 import { writeFileAtomicSync } from "./fsutil.js";
 import { listEviaRolePresets } from "./evia-roles.js";
+import { createDirectorPreviewDemoV1 } from "./director-preview-demo.js";
 import { Ledger, dayKey, type Cap } from "./ledger.js";
 import { initPrices, pricesFile, customPrices, parsePrices, saveCustomPrices, DEFAULT_PRICES } from "./prices.js";
 import { EventLog, type OfficeEvent } from "./events.js";
@@ -740,6 +741,9 @@ app.get("/api/offices", (_req, res) => res.json([...offices.values()].map((o) =>
 
 // Versioned EVIA hiring presets: a read-only catalog, not an execution endpoint.
 app.get("/api/evia/roles", (_req, res) => res.json({ roles: listEviaRolePresets() }));
+
+// F2-03A: static, fictional Director preview; no arguments, auth, Board or model calls.
+app.get("/api/evia/director/fixture", (_req, res) => res.json(createDirectorPreviewDemoV1()));
 
 // ---- office management (persisted to config.json, applied live) ----
 const officesPayload = () => ({ type: "offices", multiOffice: settings.multiOffice, offices: [...offices.values()].map((o) => ({ ...officeInfo(o), employees: roster(o) })) });

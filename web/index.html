@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="integrations.css" />
   <link rel="stylesheet" href="drawer.css" />
   <link rel="stylesheet" href="boardui.css" />
+  <link rel="stylesheet" href="director-preview.css" />
   <link rel="stylesheet" href="select.css" />
 </head>
 <body>
@@ -38,6 +39,7 @@
           <button class="menu-item" id="btnShop" type="button" role="menuitem"><span class="mi-i">🛒</span><span class="mi-t"><b data-i18n="ui.tools.shop"></b><small data-i18n="ui.tools.shopSub"></small></span></button>
           <button class="menu-item" id="btnIntegrations" type="button" role="menuitem"><span class="mi-i">🔌</span><span class="mi-t"><b data-i18n="ui.tools.integrations"></b><small data-i18n="ui.tools.integrationsSub"></small></span></button>
           <button class="menu-item" id="btnSkills" type="button" role="menuitem"><span class="mi-i">🧩</span><span class="mi-t"><b data-i18n="ui.tools.skills"></b><small data-i18n="ui.tools.skillsSub"></small></span></button>
+          <button class="menu-item" id="btnDirector" type="button" role="menuitem"><span class="mi-i">◇</span><span class="mi-t"><b data-i18n="ui.director.menu"></b><small data-i18n="ui.director.menuSub"></small></span></button>
           <div class="legend" id="legend">
             <span class="legend-item" data-i18n-tip="ui.legend.idle"><i class="dot idle"></i><span data-i18n="ui.legend.idle"></span></span>
             <span class="legend-item" data-i18n-tip="ui.legend.working"><i class="dot working"></i><span data-i18n="ui.legend.working"></span></span>
@@ -211,6 +213,37 @@
     </div>
   </div>
 
+  <div class="modal" id="directorModal" hidden>
+    <section class="modal-card director-card" role="dialog" aria-modal="true" aria-labelledby="directorTitle" aria-describedby="directorIntro">
+      <div class="modal-head director-head">
+        <div class="director-title-wrap"><span class="director-kicker">EVIA OFFICE OS / F2-03A</span><h2 id="directorTitle" data-i18n="ui.director.title"></h2></div>
+        <span class="director-tag" data-i18n="ui.director.badge"></span>
+        <button class="icon-btn" type="button" id="directorClose" data-i18n-aria="ui.director.close" aria-label="Close">×</button>
+      </div>
+      <p class="director-intro" id="directorIntro" data-i18n="ui.director.intro"></p>
+      <div class="director-guard" aria-label="Director safety boundary">
+        <div><small data-i18n="ui.director.modeLabel"></small><strong data-i18n="ui.director.modeValue"></strong></div>
+        <div><small data-i18n="ui.director.modelLabel"></small><strong>GPT-6.1 Sol</strong><span data-i18n="ui.director.modelValue"></span></div>
+        <div><small data-i18n="ui.director.authorityLabel"></small><strong data-i18n="ui.director.authorityValue"></strong></div>
+      </div>
+      <div id="directorState" class="director-state" role="status" aria-live="polite"></div>
+      <section id="directorPreview" hidden>
+        <div class="director-objective"><small data-i18n="ui.director.objective"></small><p id="directorObjective"></p></div>
+        <div class="director-flow" aria-hidden="true"><span data-i18n="ui.director.flowRequest"></span><i>→</i><span data-i18n="ui.director.flowPlan"></span><i>→</i><span data-i18n="ui.director.flowQA"></span><i>⊣</i><span data-i18n="ui.director.flowBlocked"></span></div>
+        <h3 data-i18n="ui.director.proposedTasks"></h3>
+        <div id="directorTasks" class="director-tasks"></div>
+      </section>
+      <div class="director-footer">
+        <small data-i18n="ui.director.footer"></small>
+        <div class="director-actions">
+          <button type="button" class="btn small" id="directorRetry" data-i18n="ui.director.reload"></button>
+          <button type="button" class="btn small" id="directorDiscard" data-i18n="ui.director.discard" disabled></button>
+          <button type="button" class="btn small primary" id="directorKeep" data-i18n="ui.director.keep" disabled></button>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <div class="modal" id="activityModal" hidden>
     <div class="modal-card panel-card">
       <div class="modal-head"><h2 data-i18n="ui.activity.title"></h2><button class="icon-btn" id="activityClose" data-i18n-title="ui.activity.close">×</button></div>
@@ -351,6 +384,7 @@
   <script src="market.js"></script>
   <script src="office.js"></script>
   <script src="shared.js"></script>
+  <script src="director-preview.js"></script>
   <script src="copy.js"></script>
   <script src="app.js"></script>
   <script src="layouteditor.js"></script>
