@@ -61,11 +61,19 @@ try {
   reject(d => callback(d).replace("127.0.0.1", "localhost"), /target mismatch/);
   reject(d => callback(d).replace("1455", "9999"), /target mismatch/);
   reject(d => callback(d).replace("auth\/callback", "callback"), /target mismatch/);
+  reject(d => callback(d).replace("http://", "http://unexpected-user@"), /target mismatch/);
   reject(d => callback(d) + "&state=duplicate", /Duplicate/);
   reject(d => callback(d) + "&code=duplicate", /Duplicate/);
+  reject(d => callback(d) + "&scope=one&scope=two", /Duplicate/);
+  reject(d => callback(d) + "&access_token=untrusted", /Unexpected OAuth callback parameter/);
+  reject(d => callback(d) + "&error=", /Invalid OAuth error callback/);
+  reject(d => callback(d) + "&error_description=untrusted", /Unexpected OAuth error description/);
+  reject(d => callback(d) + "&padding=" + "x".repeat(9000), /callback length/);
   reject(d => callback(d).replace("oaiapp_fixture123", "dynamic_agent_client"), /invalid dynamically/);
   reject(d => callback(d).replace("code=synthetic-secret-code&", ""), /authorization code/);
   const expired = make();
+  assert.throws(() => inspectSiwcCallbackForHarnessOnly(expired, callback(expired),
+    expired.expiresAt), /expired/);
   assert.throws(() => inspectSiwcCallbackForHarnessOnly(expired, callback(expired),
     expired.expiresAt + 1), /expired/);
   assert.throws(() => inspectSiwcCallbackForHarnessOnly({}, "http://127.0.0.1/"), /Unknown/);
