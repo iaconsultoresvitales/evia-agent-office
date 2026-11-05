@@ -43,6 +43,8 @@ jobs:
         run: node scripts/test-siwc-auth-offline.mjs
       - name: F2-02A1 offline OIDC cryptographic fixtures (no accounts)
         run: node scripts/test-siwc-oidc-fixture.mjs
+      - name: F2-02B1 synthetic Responses stream gate (no inference)
+        run: node scripts/test-director-response-fixture.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
