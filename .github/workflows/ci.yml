@@ -55,6 +55,8 @@ jobs:
           node scripts/test-director-preview-ui.mjs
       - name: F3-01A project/client scope harness (no data access)
         run: node scripts/test-project-scope-harness.mjs
+      - name: F3-01B synthetic project path preflight (metadata only)
+        run: node scripts/test-project-path-probe.mjs
       - name: EVIA hiring UI JavaScript syntax
         run: node --check web/hire.js
       - name: Chat copy button (exact Markdown, fallback, wiring)
