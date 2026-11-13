@@ -19,7 +19,7 @@ try {
   const eviaResponse = await fetch(`http://127.0.0.1:${port}/api/evia/roles`);
   if (!eviaResponse.ok) throw new Error("EVIA roles API failed");
   const evia = await eviaResponse.json();
-  if (!Array.isArray(evia.roles) || evia.roles.length !== 4 ||
+  if (!Array.isArray(evia.roles) || evia.roles.length !== 9 ||
       evia.roles.some((role) => role.permissionMode !== "plan" || !role.prompt)) {
     throw new Error("bad /api/evia/roles");
   }
