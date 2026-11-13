@@ -6,7 +6,7 @@ import { EVIA_ROLE_IDS, listEviaRolePresets } from "../dist/server/evia-roles.js
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const roles = listEviaRolePresets();
-assert.equal(roles.length, 4);
+assert.equal(roles.length, 9);
 assert.deepEqual(roles.map((role) => role.id), [...EVIA_ROLE_IDS]);
 assert.equal(new Set(roles.map((role) => role.id)).size, roles.length);
 
@@ -22,4 +22,4 @@ for (const role of roles) {
 }
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 assert.ok(pkg.files.includes("evia"), "npm package must ship the canonical role templates");
-console.log("EVIA role catalog: 4 real profiles, plan permissions, canonical instructions, package inclusion OK");
+console.log("EVIA role catalog: 9 real profiles, plan permissions, canonical instructions, package inclusion OK");
