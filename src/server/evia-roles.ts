@@ -8,6 +8,11 @@ export const EVIA_ROLE_IDS = [
   "radar-competitivo",
   "growth-comercial",
   "operaciones",
+  "revenue-agent",
+  "caio-account-manager",
+  "finance-operations",
+  "authority-growth",
+  "product-delivery",
 ] as const;
 
 export interface EviaRolePreset {
