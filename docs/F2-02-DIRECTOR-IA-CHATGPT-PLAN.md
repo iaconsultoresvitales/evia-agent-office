@@ -1,5 +1,7 @@
 # F2-02 | Director IA con GPT-6.1 Sol y Sign in with ChatGPT
 
+> **Adenda de cierre offline, 4 de noviembre de 2026 (MX):** La cabecera y las autorizaciones que siguen describen el diseño original y no representan el último estado de las ramas. Los PR [#18](https://github.com/iaconsultoresvitales/evia-agent-office/pull/18), [#19](https://github.com/iaconsultoresvitales/evia-agent-office/pull/19) y [#20](https://github.com/iaconsultoresvitales/evia-agent-office/pull/20) fueron fusionados en `main` (HEAD `30c53b2`). F2-02A/A1/B1/B2 son únicamente arneses offline. F2-02C/D se desarrollan en una rama independiente para cerrar el **paquete sintético**, no la autenticación/inferencia real. Véase [expediente de cierre](F2-02C-D-OFFLINE-CLOSURE.md) y [F2-03 propuesto](F2-03-DIRECTOR-INTEGRATION-PROPOSAL.md). Ninguna cuenta conectada, gasto, despliegue ni ejecución está autorizada por esta adenda.
+
 **Proyecto:** EVIA Office OS  
 **Fecha de diseño:** 4 de noviembre de 2026  
 **Estado:** DISEÑO APROBADO; INFERENCIA GPT-6.1 SOL NO IMPLEMENTADA NI PROBADA; SIN DESPLIEGUE  
