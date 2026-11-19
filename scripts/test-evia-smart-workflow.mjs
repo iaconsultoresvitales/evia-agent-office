@@ -4,6 +4,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Board, WorkflowApprovalError } from "../dist/server/board.js";
+import { officeToolDefs } from "../dist/server/office-tools.js";
+import { initRuntime } from "../dist/server/runtime.js";
 import {
   prepareSmartCoordinator, readSmartCoordinatorRequest,
   compileSmartPlan, isSmartWorkflowReview, SMART_MANAGER_ID,
@@ -99,4 +101,55 @@ try {
   assert.equal(qa.status, "done");
   assert.equal(new Board(folder).tasks.find(t=>t.id===qa.id).status,"done");
 } finally { fs.rmSync(folder, {recursive:true,force:true}); }
+
+// Exercise the actual MCP tool handler without a model, through the real Board.
+// This is the junction that turns the manager's proposal into executable tasks.
+initRuntime({}, { t: key => key });
+const planned = fs.mkdtempSync(path.join(os.tmpdir(), "evia-smart-tool-"));
+try {
+  const board = new Board(planned);
+  const coordinator = board.addTask(SMART_MANAGER_ID,
+    managerRequest.title, managerRequest.detail, "user");
+  board.updateTask(coordinator.id, { status: "doing" }, "user");
+  const self = { cfg: { id: SMART_MANAGER_ID, name: "Zen O Sama",
+    role: "Coordinación", manager: true }, currentTask: coordinator.id,
+    note() {} };
+  const team = people.map(e => e.id === SMART_MANAGER_ID ? self
+    : {cfg: { id: e.id, name: e.name, role: e.role, manager: false }});
+  const launches = [];
+  const colleagues = {
+    list: () => team, board: () => board,
+    launch: (task, from) => {
+      launches.push(task.id);
+      board.markTask(task.id, {autoStart: from.cfg.id});
+      return "waiting";
+    },
+    capBlock: () => undefined,
+    discoveryBlock: () => undefined, autoMoveBlock: () => undefined,
+    countDiscovery() {}, gatewayUrl: () => "",
+    mcpUrl: () => "",
+  };
+  const workflowTool = officeToolDefs(self, colleagues)
+    .find(t => t.name === "submit_workflow_plan");
+  assert(workflowTool?.handler, "The manager's MCP planning tool must be registered");
+  const result = await workflowTool.handler(proposed);
+  assert.equal(result.isError, undefined, JSON.stringify(result));
+  const created = board.tasks.filter(t => t.id !== coordinator.id);
+  assert.equal(created.length, 3);
+  assert.equal(board.notes.length, 1);
+  assert.equal(launches.length, 3);
+  assert(created.every(t => t.after.includes(coordinator.id)));
+  assert.deepEqual(created.map(t => t.owner),
+    ["revenue-agent", "marielis", "product-delivery"]);
+  assert.equal(created[2].review, true);
+  assert.equal(created[2].autoStart, SMART_MANAGER_ID);
+  assert.deepEqual(created[2].after.slice(1), created.slice(0,2).map(t=>t.id));
+  const duplicate = await workflowTool.handler(proposed);
+  assert.equal(duplicate.isError, true, "A second plan must not add work");
+  assert.equal(board.tasks.length, 4);
+  assert.equal(board.notes.length, 1);
+  board.updateTask(coordinator.id, { status: "done" }, SMART_MANAGER_ID);
+  assert.equal(board.tasks.find(t => t.id === coordinator.id)?.status, "done");
+} finally { fs.rmSync(planned, {recursive:true, force:true}); }
+
 console.log("EVIA smart workflow PASS: dynamic selection, graph, independent review, evidence gate");
