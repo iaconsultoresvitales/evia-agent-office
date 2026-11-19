@@ -620,7 +620,7 @@ const boardUI = (() => {
       if (result?.workflowId) {
         $("researchQaObjective").value = "";
         $("researchQaDetails").open = false;
-        toast(`Flujo iniciado: ${result.stages.length} tareas asignadas a Fabiana, Lauren y Vale.`);
+        toast(`Flujo iniciado: ${result.stages.length} tareas asignadas a Zen O Sama, Bills y 18.`);
       }
     } finally {
       button.disabled = false;
