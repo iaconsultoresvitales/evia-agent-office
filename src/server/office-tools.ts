@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { Employee } from "./employee.js";
 import { TASK_STATUSES, type Board, type Task } from "./board.js";
 import { isEviaResearchQaReview } from "./evia-research-qa.js";
-import { compileSmartPlan, readSmartCoordinatorRequest } from "./evia-smart-workflow.js";
+import { compileSmartPlan, isSmartWorkflowReview, readSmartCoordinatorRequest } from "./evia-smart-workflow.js";
 import { slug } from "./agents.js";
 import fs from "node:fs";
 import { writeFileAtomicSync } from "./fsutil.js";
@@ -249,8 +249,8 @@ export function officeToolDefs(self: Employee, colleagues: Colleagues) {
         if (k.owner !== self.cfg.id && !self.cfg.manager) return text(t("server.board.notYours", { id }), true);
         // The workflow-specific QA review belongs to the user, not even the PM.
         // The UI's user action remains available; agents only reach this tool.
-        if (status === "done" && self.cfg.manager && isEviaResearchQaReview(k)) {
-          return text("El dictamen final de este flujo requiere aprobación de Salva en el Tablero.", true);
+        if (status === "done" && self.cfg.manager && (isEviaResearchQaReview(k) || isSmartWorkflowReview(k))) {
+          return text("El dictamen final de este flujo requiere aprobación del usuario en el Tablero.", true);
         }
         // a task that needs review is closed by the boss or the project manager, not by its owner
         const gated = status === "done" && k.review && !(self.cfg.manager && k.owner !== self.cfg.id);
