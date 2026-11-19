@@ -46,8 +46,10 @@ export function prepareResearchQaWorkflow(
   const planTitle = "Plan-" + noteKey;
   const researchTitle = "Investigacion-" + noteKey;
   const qaTitle = "Validacion-" + noteKey;
-  const noteRules = "Incluye en share_note el tag '" + marker +
-    "' y comienza el contenido con '" + marker + "' para que los demás lo encuentren.";
+  // Notebook tags are limited to 30 characters. Keep the full unique UUID
+  // in note content; use a short tag to avoid silent truncation.
+  const noteRules = "Incluye en share_note el tag 'evia-flow' y comienza el contenido con '" +
+    marker + "' para que los demás lo encuentren.";
   const noExternal = "Trabaja únicamente dentro del Tablero y sus notas compartidas. No envíes mensajes externos, no publiques, no borres, no despliegues ni modifiques servicios. Si el encargo requiere una acción sensible, prepara la propuesta y detente.";
 
   return [
