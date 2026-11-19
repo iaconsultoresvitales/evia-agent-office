@@ -73,6 +73,21 @@ try {
   assert(tasks.every(Boolean), "Workflow stages absent from persisted Board");
   assert.deepEqual(tasks.slice(1).map(t => t.after), [[tasks[0].id], [tasks[1].id]]);
   assert.equal(tasks[2].review, true);
+
+  // The public Board path may only close this workflow after a real QA
+  // review + Vale-authored evidence. A premature user request fails closed.
+  const qaUrl = url + "/api/offices/main/board/tasks/" + tasks[2].id;
+  const changeQa = async status => fetch(qaUrl, {
+    method: "PUT", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  assert.equal((await changeQa("done")).status, 409,
+    "Cannot approve QA while its task is still pending");
+  assert.equal((await changeQa("review")).status, 200,
+    "User can put QA into review");
+  assert.equal((await changeQa("done")).status, 409,
+    "Cannot approve QA without a real Vale evidence note");
+
   assert.equal(tasks[1].autoStart, "user");
   assert.equal(tasks[2].autoStart, "user");
   assert(fs.existsSync(path.join(home, "data", "board.json")), "Board did not persist to disk");
