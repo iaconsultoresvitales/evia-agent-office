@@ -50,7 +50,7 @@ function listInstructionFiles(agentDir) {
     if (depth > 5) return;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
-      if (entry.isSymbolicLink()) throw new Error("No se modifican enlaces simbólicos: " + full);
+      if (entry.isSymbolicLink()) continue; // Never follow shared/vendor instruction links
       if (entry.isDirectory() && !skipDirs.has(entry.name)) walk(full, depth + 1);
       if (entry.isFile() && instructionNames.has(entry.name)) out.push(full);
     }
@@ -98,7 +98,7 @@ async function main() {
       throw new Error("Perfil activo inexistente: " + agent.id);
     }
     const agentFile = path.join(directory, "agent.md");
-    if (!fs.existsSync(agentFile)) throw new Error("Falta agent.md: " + agent.id);
+    if (!fs.existsSync(agentFile) || !fs.lstatSync(agentFile).isFile()) throw new Error("Falta agent.md real: " + agent.id);
     const actual = readName(fs.readFileSync(agentFile, "utf8"), agentFile);
     if (actual !== agent.previous && actual !== agent.name) {
       throw new Error("Nombre inesperado para " + agent.id + ": " + actual);
