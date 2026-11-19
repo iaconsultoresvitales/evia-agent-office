@@ -23,6 +23,7 @@ import { createGuard, isLoopbackHost } from "./security.js";
 import { acquireLock } from "./lock.js";
 import { writeFileAtomicSync } from "./fsutil.js";
 import { listEviaRolePresets } from "./evia-roles.js";
+import { prepareResearchQaWorkflow } from "./evia-research-qa.js";
 import { Ledger, dayKey, type Cap } from "./ledger.js";
 import { initPrices, pricesFile, customPrices, parsePrices, saveCustomPrices, DEFAULT_PRICES } from "./prices.js";
 import { EventLog, type OfficeEvent } from "./events.js";
@@ -851,6 +852,46 @@ r.post("/board/tasks", (req: OReq, res) => {
   res.json(o.board.addTask(owner.cfg.id, title, clean(b.detail, 8000), "user", !!b.review, Array.isArray(b.after) ? b.after.map(Number).filter(Number.isFinite) : []));
   if (modeOf(o) === "auto") nudgeManager(o); // in an office that runs on its own, a task the boss lists is a task to get going
 });
+// One explicit owner action schedules a real, three-stage workflow using existing employees.
+// Tasks and handoffs stay in the Board; no second model runtime or new agent is installed.
+r.post("/board/workflows/research-qa", (req: OReq, res) => {
+  const o = officeOf(req);
+  if (!o) return res.status(404).json({ error: t("server.notFound") });
+  const workflowId = crypto.randomUUID();
+  let steps;
+  try {
+    steps = prepareResearchQaWorkflow(req.body?.objective, o.employees.keys(), workflowId);
+  } catch (err) {
+    const message = (err as Error).message;
+    return res.status(message.startsWith("Faltan perfiles") ? 409 : 400).json({ error: message });
+  }
+
+  const byKey = new Map<string, Task>();
+  try {
+    // Persist all stages before launching: a partial creation is reverted if disk writing fails.
+    for (const step of steps) {
+      const prerequisite = step.afterKey ? byKey.get(step.afterKey) : undefined;
+      if (step.afterKey && !prerequisite) throw new Error("Falta una dependencia del workflow.");
+      const detail = step.detail + (prerequisite ? "\nTarea precedente: #" + prerequisite.id + "." : "");
+      const task = o.board.addTask(step.owner, step.title, detail, "user", step.review,
+        prerequisite ? [prerequisite.id] : []);
+      byKey.set(step.key, task);
+    }
+  } catch (err) {
+    for (const task of [...byKey.values()].reverse()) o.board.deleteTask(task.id);
+    throw err;
+  }
+  const created = [...byKey.values()];
+  // The owner started the whole workflow: downstream stages wait for prerequisites.
+  // Launch in reverse order so they are queued before Fabiana begins.
+  for (const task of [...created].reverse()) launch(o, task);
+  res.status(201).json({
+    workflowId,
+    engine: "evia-native",
+    stages: created.map((task) => ({ key: steps.find((s) => s.owner === task.owner)?.key, taskId: task.id, owner: task.owner, status: task.status })),
+  });
+});
+
 // "Start": the task goes to its owner as an ordinary message from the boss, so it shows in the chat and can be answered.
 r.post("/board/tasks/:id/start", (req: OReq, res) => {
   const o = officeOf(req);
