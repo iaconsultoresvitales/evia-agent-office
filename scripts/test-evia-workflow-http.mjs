@@ -18,9 +18,9 @@ const port = await new Promise((resolve, reject) => {
   });
 });
 const agents = [
-  ["direccion-ia-evia", "Fabiana", "Coordinación estratégica", "true"],
-  ["lauren", "Lauren", "Inteligencia", "false"],
-  ["product-delivery", "Vale", "Entrega técnica y calidad", "false"],
+  ["direccion-ia-evia", "Zen O Sama", "Coordinación estratégica", "true"],
+  ["lauren", "Bills", "Inteligencia", "false"],
+  ["product-delivery", "18", "Entrega técnica y calidad", "false"],
 ];
 fs.writeFileSync(path.join(home, "config.json"), JSON.stringify({
   locale: "es", port, employeesDir: "employees", dataDir: "data",
@@ -75,7 +75,7 @@ try {
   assert.equal(tasks[2].review, true);
 
   // The public Board path may only close this workflow after a real QA
-  // review + Vale-authored evidence. A premature user request fails closed.
+  // review + 18-authored evidence. A premature user request fails closed.
   const qaUrl = url + "/api/offices/main/board/tasks/" + tasks[2].id;
   const changeQa = async status => fetch(qaUrl, {
     method: "PUT", headers: { "content-type": "application/json" },
@@ -86,7 +86,7 @@ try {
   assert.equal((await changeQa("review")).status, 200,
     "User can put QA into review");
   assert.equal((await changeQa("done")).status, 409,
-    "Cannot approve QA without a real Vale evidence note");
+    "Cannot approve QA without a real 18 evidence note");
 
   assert.equal(tasks[1].autoStart, "user");
   assert.equal(tasks[2].autoStart, "user");

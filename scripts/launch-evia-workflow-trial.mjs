@@ -27,9 +27,9 @@ fs.writeFileSync(path.join(state, "config.json"), JSON.stringify({
 }, null, 2));
 
 const employees = [
-  ["direccion-ia-evia", "Fabiana", "Coordinación estratégica de iniciativas de IA", "true"],
-  ["lauren", "Lauren", "Personal Assistant", "false"],
-  ["product-delivery", "Vale", "Entrega técnica y calidad de productos IA", "false"],
+  ["direccion-ia-evia", "Zen O Sama", "Coordinación estratégica de iniciativas de IA", "true"],
+  ["lauren", "Bills", "Personal Assistant", "false"],
+  ["product-delivery", "18", "Entrega técnica y calidad de productos IA", "false"],
 ];
 for (const [id, name, role, manager] of employees) {
   const source = fs.readFileSync(path.join(operationalAgents, id, "agent.md"), "utf8");
@@ -60,7 +60,7 @@ console.log("Datos temporales: " + workspace);
 console.log("Perfiles de producción: solo lectura; no se copian conversaciones ni memorias.");
 console.log("Permisos bypass: deshabilitados únicamente en esta copia temporal.");
 console.log("Abre: http://127.0.0.1:" + port + "/?office=main");
-console.log("Tablero > Nuevo flujo EVIA: Fabiana → Lauren → Vale > Iniciar flujo.");
+console.log("Tablero > Nuevo flujo EVIA: Zen O Sama → Bills → 18 > Iniciar flujo.");
 console.log("Objetivo sugerido: Analiza tres mejoras posibles para un proceso ficticio de seguimiento comercial, sin consultar datos externos; entrega recomendaciones y criterios de calidad.");
 console.log("Se usarán tus sesiones de modelos configuradas en la Mac; pueden consumir cuota.");
 console.log("Detén únicamente ESTA oficina con Ctrl+C desde esta terminal.\n");
