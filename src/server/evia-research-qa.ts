@@ -5,6 +5,16 @@
  */
 export const RESEARCH_QA_AGENTS = ["direccion-ia-evia", "lauren", "product-delivery"] as const;
 
+/** This workflow's QA verdict is reviewed by the user, never closed by another agent.
+ *  The check applies to office-tool commands; host identity enforcement is F5.
+ */
+export function isEviaResearchQaReview(task: {
+  owner: string; review?: boolean; detail: string;
+}): boolean {
+  return task.owner === "product-delivery" && task.review === true &&
+    /(?:^|\\n)evia-flow:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\\n|$)/i.test(task.detail);
+}
+
 export interface EviaResearchStep {
   key: "coordinate" | "research" | "quality";
   owner: string;
