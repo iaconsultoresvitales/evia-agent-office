@@ -53,6 +53,10 @@ export function readSmartCoordinatorRequest(task: { owner: string; detail: strin
   } catch { return null; }
 }
 
+export function isSmartWorkflowTask(task: { detail: string }): boolean {
+  return /(?:^|\n)evia-smart:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\n|$)/i.test(task.detail);
+}
+
 export function isSmartCoordinatorTask(task: { owner: string; detail: string }): boolean {
   return task.owner === SMART_MANAGER_ID &&
     /(?:^|\n)evia-smart:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\n|$)/i.test(task.detail) &&
