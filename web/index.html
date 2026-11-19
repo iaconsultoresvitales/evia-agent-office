@@ -145,6 +145,16 @@
           <label class="check"><input type="checkbox" id="newTaskReview" /> <span data-i18n="ui.board.needsReviewLong"></span></label>
           <div class="actions"><small class="muted" data-i18n="ui.board.addHint"></small><button class="btn primary small" type="submit" data-i18n="ui.board.add"></button></div>
         </form></details>
+        <details class="board-new" id="smartWorkflowDetails">
+          <summary>Workflow inteligente — Zen O Sama selecciona el equipo</summary>
+          <form id="smartWorkflowForm" class="board-form">
+            <textarea id="smartWorkflowObjective" rows="3" maxlength="1200" required placeholder="Describe el objetivo y el resultado de negocio que esperas. Zen O Sama seleccionará especialistas y dependencias."></textarea>
+            <div class="actions">
+              <small class="muted">Zen O Sama elige entre los agentes disponibles, asigna tareas dependientes y designa un revisor independiente. Los entregables quedan en el Tablero y tú apruebas el cierre final.</small>
+              <button class="btn primary small" id="smartWorkflowSubmit" type="submit">Delegar objetivo</button>
+            </div>
+          </form>
+        </details>
         <details class="board-new" id="researchQaDetails">
           <summary>Nuevo flujo EVIA: Zen O Sama → Bills → 18</summary>
           <form id="researchQaForm" class="board-form">
