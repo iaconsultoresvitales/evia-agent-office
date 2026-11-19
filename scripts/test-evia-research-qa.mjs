@@ -58,6 +58,13 @@ try {
     assert.equal(fs.readFileSync(path.join(scratch, "board.json"), "utf8"), before,
       "Rejected approval must not mutate the Board");
   }
+  assert.throws(() => board.updateTask(qa.id, { status: "done" }, "user"),
+    err => err instanceof WorkflowApprovalError && err.status === 409,
+    "User approval requires Vale's registered QA note");
+  const marker = "evia-flow:" + id;
+  board.addNote("product-delivery", "Vale", "Validacion-" + id.replace(/-/g, ""),
+    marker + "\nDictamen: APROBADO. Los cinco criterios del caso se cumplen.",
+    ["evia-flow"]);
   board.updateTask(qa.id, { status: "done", note: "Aprobación del usuario" }, "user");
   assert.equal(board.tasks.find(x => x.id === qa.id).status, "done");
 
