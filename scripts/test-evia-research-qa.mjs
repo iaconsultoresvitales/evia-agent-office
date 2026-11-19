@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { prepareResearchQaWorkflow, RESEARCH_QA_AGENTS } from "../dist/server/evia-research-qa.js";
+import { prepareResearchQaWorkflow, RESEARCH_QA_AGENTS, isEviaResearchQaReview } from "../dist/server/evia-research-qa.js";
 
 const id = "11111111-2222-3333-4444-555555555555";
 const steps = prepareResearchQaWorkflow("Investigar tres tendencias de IA aplicadas a pymes.", RESEARCH_QA_AGENTS, id);
@@ -7,6 +7,12 @@ const steps = prepareResearchQaWorkflow("Investigar tres tendencias de IA aplica
 assert.deepEqual(steps.map((s) => s.owner), [...RESEARCH_QA_AGENTS]);
 assert.deepEqual(steps.map((s) => s.afterKey ?? null), [null, "coordinate", "research"]);
 assert.deepEqual(steps.map((s) => s.review), [false, false, true]);
+const qaTask = { owner: steps[2].owner, review: steps[2].review, detail: steps[2].detail };
+assert.equal(isEviaResearchQaReview(qaTask), true, "QA workflow review must require user approval");
+assert.equal(isEviaResearchQaReview({ ...qaTask, review: false }), false, "Ordinary tasks stay unaffected");
+assert.equal(isEviaResearchQaReview({ ...qaTask, owner: "lauren" }), false);
+assert.equal(isEviaResearchQaReview({ ...qaTask, detail: "Ordinary review" }), false);
+
 assert(steps.every((s) => s.detail.includes("evia-flow:" + id)));
 assert(steps.every((s) => s.detail.includes("No envíes mensajes externos")));
 assert.match(steps[1].detail, /read_notes/);
