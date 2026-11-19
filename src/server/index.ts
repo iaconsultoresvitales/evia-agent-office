@@ -24,6 +24,7 @@ import { acquireLock } from "./lock.js";
 import { writeFileAtomicSync } from "./fsutil.js";
 import { listEviaRolePresets } from "./evia-roles.js";
 import { prepareResearchQaWorkflow } from "./evia-research-qa.js";
+import { SMART_MANAGER_ID, prepareSmartCoordinator } from "./evia-smart-workflow.js";
 import { Ledger, dayKey, type Cap } from "./ledger.js";
 import { initPrices, pricesFile, customPrices, parsePrices, saveCustomPrices, DEFAULT_PRICES } from "./prices.js";
 import { EventLog, type OfficeEvent } from "./events.js";
@@ -852,6 +853,35 @@ r.post("/board/tasks", (req: OReq, res) => {
   res.json(o.board.addTask(owner.cfg.id, title, clean(b.detail, 8000), "user", !!b.review, Array.isArray(b.after) ? b.after.map(Number).filter(Number.isFinite) : []));
   if (modeOf(o) === "auto") nudgeManager(o); // in an office that runs on its own, a task the boss lists is a task to get going
 });
+// Dynamic workflow: real manager receives the request, then chooses and schedules
+// specialists through submit_workflow_plan, with server-side validation.
+r.post("/board/workflows/smart", (req: OReq, res) => {
+  const o = officeOf(req);
+  if (!o) return res.status(404).json({ error: t("server.notFound") });
+  const manager = managerOf(o);
+  if (!manager || manager.cfg.id !== SMART_MANAGER_ID) {
+    return res.status(409).json({ error: "Zen O Sama debe ser el Project Manager de esta oficina." });
+  }
+  if (manager.inMeeting) {
+    return res.status(409).json({ error: "Zen O Sama está en una reunión. Prueba después." });
+  }
+  const id = crypto.randomUUID();
+  let request;
+  try {
+    request = prepareSmartCoordinator(req.body?.objective,
+      [...o.employees.values()].map(e => ({
+        id: e.cfg.id, name: e.cfg.name, role: e.cfg.role,
+      })), id);
+  } catch (err) { return res.status(400).json({ error: (err as Error).message }); }
+  const task = o.board.addTask(manager.cfg.id, request.title,
+    request.detail, "user");
+  const launchStatus = launch(o, task);
+  res.status(201).json({
+    workflowId: id, managerTaskId: task.id, manager: manager.cfg.name,
+    status: launchStatus, mode: "agent-selected", marker: request.marker,
+  });
+});
+
 // One explicit owner action schedules a real, three-stage workflow using existing employees.
 // Tasks and handoffs stay in the Board; no second model runtime or new agent is installed.
 r.post("/board/workflows/research-qa", (req: OReq, res) => {

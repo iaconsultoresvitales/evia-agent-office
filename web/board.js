@@ -609,6 +609,26 @@ const boardUI = (() => {
     if (!title || !owner) return;
     if (await call("POST", `${API()}/tasks`, { title, detail: $("newTaskDetail").value, owner, review: $("newTaskReview").checked })) { $("newTaskTitle").value = ""; $("newTaskDetail").value = ""; }
   };
+  $("smartWorkflowForm").onsubmit = async (ev) => {
+    ev.preventDefault();
+    const objective = $("smartWorkflowObjective").value.trim();
+    if (!objective) return;
+    const button = $("smartWorkflowSubmit");
+    button.disabled = true;
+    try {
+      const result = await call("POST", `${API()}/workflows/smart`, { objective });
+      if (result?.workflowId) {
+        $("smartWorkflowObjective").value = "";
+        $("smartWorkflowDetails").open = false;
+        toast(`Zen O Sama recibió el objetivo en la tarea #${result.managerTaskId}. Elegirá responsables y creará el workflow.`);
+        tab = "tasks";
+        drawerId = result.managerTaskId;
+        renderTasks();
+      }
+    } finally {
+      button.disabled = false;
+    }
+  };
   $("researchQaForm").onsubmit = async (ev) => {
     ev.preventDefault();
     const objective = $("researchQaObjective").value.trim();

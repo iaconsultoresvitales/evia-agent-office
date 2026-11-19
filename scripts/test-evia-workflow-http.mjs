@@ -90,6 +90,27 @@ try {
 
   assert.equal(tasks[1].autoStart, "user");
   assert.equal(tasks[2].autoStart, "user");
+
+  const smartUrl = url + "/api/offices/main/board/workflows/smart";
+  const smartInvalid = await fetch(smartUrl, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({objective:"short"}),
+  });
+  assert.equal(smartInvalid.status, 400, "Invalid manager request must be rejected");
+  const smartResponse = await fetch(smartUrl, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({objective:"Investigar una propuesta ficticia y seleccionar los especialistas adecuados."}),
+  });
+  const smart = await smartResponse.json();
+  assert.equal(smartResponse.status, 201, JSON.stringify(smart));
+  assert.equal(smart.mode, "agent-selected");
+  assert.equal(smart.manager, agents[0][1]);
+  const nextBoard = await (await fetch(url + "/api/offices/main/board")).json();
+  const newTask = nextBoard.tasks.find(t => t.id === smart.managerTaskId);
+  assert.equal(newTask?.owner, "direccion-ia-evia");
+  assert(newTask.detail.includes("evia-smart:" + smart.workflowId));
+  assert(newTask.detail.includes("mcp__office__submit_workflow_plan"));
+  assert.equal(nextBoard.tasks.filter(t => t.detail.includes("evia-smart-role:coordinator")).length, 1);
   assert(fs.existsSync(path.join(home, "data", "board.json")), "Board did not persist to disk");
   console.log("EVIA workflow HTTP smoke PASS: UI, POST, 3 agents, dependency chain, review gate, persistence");
 } finally {

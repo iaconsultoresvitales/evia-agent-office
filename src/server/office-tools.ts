@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { Employee } from "./employee.js";
 import { TASK_STATUSES, type Board, type Task } from "./board.js";
 import { isEviaResearchQaReview } from "./evia-research-qa.js";
+import { compileSmartPlan, isSmartWorkflowReview, readSmartCoordinatorRequest } from "./evia-smart-workflow.js";
 import { slug } from "./agents.js";
 import fs from "node:fs";
 import { writeFileAtomicSync } from "./fsutil.js";
@@ -22,7 +23,7 @@ export interface Colleagues {
   mcpUrl(self: Employee): string; // where an engine that is a separate program reaches this employee's office tools
 }
 
-export const OFFICE_TOOLS = ["remember", "propose_idea", "list_ideas", "promote_idea", "review_idea", "edit_idea", "list_colleagues", "message_colleague", "raise_hand", "share_note", "read_notes", "edit_note", "delete_note", "list_tasks", "update_task", "assign_task", "start_task", "colleague_activity"].map((n) => `mcp__office__${n}`);
+export const OFFICE_TOOLS = ["remember", "propose_idea", "list_ideas", "promote_idea", "review_idea", "edit_idea", "list_colleagues", "message_colleague", "raise_hand", "share_note", "read_notes", "edit_note", "delete_note", "list_tasks", "update_task", "assign_task", "start_task", "submit_workflow_plan", "colleague_activity"].map((n) => `mcp__office__${n}`);
 
 const text = (s: string, isError = false) => ({ content: [{ type: "text" as const, text: s }], ...(isError ? { isError: true } : {}) });
 
@@ -248,8 +249,8 @@ export function officeToolDefs(self: Employee, colleagues: Colleagues) {
         if (k.owner !== self.cfg.id && !self.cfg.manager) return text(t("server.board.notYours", { id }), true);
         // The workflow-specific QA review belongs to the user, not even the PM.
         // The UI's user action remains available; agents only reach this tool.
-        if (status === "done" && self.cfg.manager && isEviaResearchQaReview(k)) {
-          return text("El dictamen final de este flujo requiere aprobación de Salva en el Tablero.", true);
+        if (status === "done" && self.cfg.manager && (isEviaResearchQaReview(k) || isSmartWorkflowReview(k))) {
+          return text("El dictamen final de este flujo requiere aprobación del usuario en el Tablero.", true);
         }
         // a task that needs review is closed by the boss or the project manager, not by its owner
         const gated = status === "done" && k.review && !(self.cfg.manager && k.owner !== self.cfg.id);
@@ -259,6 +260,77 @@ export function officeToolDefs(self: Employee, colleagues: Colleagues) {
         const closing = status === "done" && k.owner === self.cfg.id && k.kind !== "discovery" ? "\n" + t("server.ideas.closingNudge") : "";
         return text((gated ? t("server.board.sentForReview", { id }) : t("server.board.updated", { id, status: next ?? k.status })) + closing);
       }),
+      // A single controlled delegation action for Zen O Sama's smart workflow.
+      // Manager chooses roles and graph; backend validates owners, DAG, bounds and QA.
+      tool("submit_workflow_plan",
+        "Crea una única vez el workflow dinámico que inició Salva. Las etapas y dependencias son validadas y se programan sin iniciar acciones externas.",
+        {
+          summary: z.string().min(15).max(1500),
+          steps: z.array(z.object({
+            key: z.string(), owner: z.string(), title: z.string(),
+            instructions: z.string(), afterKeys: z.array(z.string()),
+          })).min(1).max(7),
+          reviewer: z.string(),
+          reviewCriteria: z.string(),
+        },
+        async (proposed) => {
+          if (!self.cfg.manager || self.currentTask === undefined) return notManager();
+          const managerTask = board().tasks.find(k => k.id === self.currentTask && k.owner === self.cfg.id);
+          if (!managerTask || managerTask.status !== "doing") return text("No existe una tarea de coordinación activa.", true);
+          const request = readSmartCoordinatorRequest(managerTask);
+          if (!request) return text("Esta herramienta requiere una solicitud inteligente iniciada por Salva.", true);
+          const marker = "evia-smart:" + request.id;
+          if (board().tasks.some(k => k.id !== managerTask.id && k.detail.split("\n").includes(marker))) {
+            return text("Este flujo ya tiene tareas asignadas. No se duplicará.", true);
+          }
+          let flow;
+          try {
+            flow = compileSmartPlan(proposed, colleagues.list().map(e => ({
+              id: e.cfg.id, name: e.cfg.name, role: e.cfg.role,
+            })), request.objective, request.id);
+          } catch (error) { return text((error as Error).message, true); }
+          const cap = colleagues.capBlock();
+          if (cap) return text(cap, true);
+          const created: Task[] = [];
+          let planNote: number | undefined;
+          const byKey = new Map<string, Task>();
+          try {
+            const note = board().addNote(self.cfg.id, self.cfg.name,
+              "Plan-smart-" + request.id.replace(/-/g, ""),
+              [marker, "Objetivo: " + request.objective, "Plan: " + flow.summary,
+                "Etapas: " + flow.steps.map(s => s.key + " → " +
+                  colleagues.list().find(e => e.cfg.id === s.owner)?.cfg.name).join("; "),
+                "Criterios de QA: " + proposed.reviewCriteria].join("\n"),
+              ["evia-smart"]);
+            planNote = note.id;
+            for (const step of flow.steps) {
+              const dependencies = step.afterKeys.map(key => {
+                const k = byKey.get(key);
+                if (!k) throw new Error("Dependencia pendiente: " + key);
+                return k.id;
+              });
+              const task = board().addTask(step.owner,
+                step.title.slice(0, 160),
+                step.detail.slice(0, 8000),
+                self.cfg.id, step.review, [managerTask.id, ...dependencies]);
+              created.push(task);
+              byKey.set(step.key, task);
+            }
+          } catch (error) {
+            for (const k of created.reverse()) board().deleteTask(k.id);
+            if (planNote !== undefined) board().deleteNote(planNote);
+            return text("No se pudo registrar el workflow: " + (error as Error).message, true);
+          }
+          // Starting each stage now remembers approval while the coordinator
+          // is still doing its own task; actual execution honors prerequisites.
+          for (const k of [...created].reverse()) colleagues.launch(k, self);
+          self.note("Workflow " + marker + ": " + created.length +
+            " etapas registradas y programadas. Plan en nota #" + planNote + ".");
+          return text("Plan registrado (" + marker + "). Nota #" + planNote +
+            ". Tareas: " + created.map((k, i) => flow.steps[i].key + "=#" + k.id +
+              " (" + colleagues.list().find(e => e.cfg.id === k.owner)?.cfg.name + ")").join(", ") +
+            ". Ahora cierra TU tarea #" + managerTask.id + " mediante update_task status done.");
+        }),
       tool("assign_task", t("server.board.assignDesc"), {
         to: z.string().describe(t("server.office.toDesc")),
         title: z.string().describe(t("server.board.taskTitleDesc")),

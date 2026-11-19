@@ -16,6 +16,7 @@ import {
 import type { Store } from "./store.js";
 import { t, tget, getSettings } from "./runtime.js";
 import { officeServer, OFFICE_TOOLS, type Colleagues } from "./office-tools.js";
+import { isSmartCoordinatorTask, isSmartWorkflowTask } from "./evia-smart-workflow.js";
 import { runCodexTurn, skillsIndex, skillFile, type CodexItem } from "./codex.js";
 import { runGeminiTurn, type GeminiEvent } from "./gemini.js";
 import { costOf } from "./prices.js";
@@ -946,6 +947,16 @@ export class Employee extends EventEmitter {
     const compactAt = getSettings().compactAtTokens;
     const taskId = taskOf(key);
     const task = taskId !== undefined ? this.colleagues?.board().tasks.find((x) => x.id === taskId) : undefined;
+    const smartSession = !!task && isSmartWorkflowTask(task);
+    const smartCoordinator = smartSession && isSmartCoordinatorTask(task);
+    const smartTools = smartCoordinator
+      ? ["mcp__office__list_colleagues", "mcp__office__submit_workflow_plan",
+        "mcp__office__update_task", "mcp__office__read_notes"]
+      : ["mcp__office__list_colleagues", "mcp__office__read_notes",
+        "mcp__office__share_note", "mcp__office__update_task",
+        "Read", "Glob", "Grep", "WebSearch", "WebFetch"];
+    const smartDenied = ["Bash", "Write", "Edit", "MultiEdit", "NotebookEdit",
+      "Task", "TaskCreate", "TaskUpdate", "TaskStop", "EnterPlanMode", "ExitPlanMode"];
     const resumeId = key === "side" ? undefined : taskId !== undefined ? task?.session : this.sessionId;
     this.procPrev = resumeId ? this.sessionTotals()[resumeId] ?? 0 : 0;
     this.procFirst = true;
@@ -968,10 +979,14 @@ export class Employee extends EventEmitter {
         hooks: { SessionStart: [{ matcher: "compact", hooks: [async () => this.afterCompact()] }] },
         title: taskId !== undefined ? `${this.cfg.name} — #${taskId} ${task?.title ?? ""}`.slice(0, 120) : `${this.cfg.name} — ${this.cfg.role}`,
         includePartialMessages: true,
-        permissionMode: this.cfg.permissionMode ?? "default",
-        allowedTools: [...(this.cfg.allowedTools ?? []), ...OFFICE_TOOLS, ...integ.allowed],
-        disallowedTools: integ.denied.length ? integ.denied : undefined,
-        mcpServers: this.colleagues || Object.keys(integ.servers).length ? { ...(this.colleagues ? { office: officeServer(this, this.colleagues) } : {}), ...integ.servers } : undefined,
+        // Smart workflows are internal draft/research tasks: never inherit
+        // bypassPermissions or extra integrations from an agent profile.
+        permissionMode: smartSession ? "default" : this.cfg.permissionMode ?? "default",
+        allowedTools: smartSession ? smartTools : [...(this.cfg.allowedTools ?? []), ...OFFICE_TOOLS, ...integ.allowed],
+        disallowedTools: smartSession ? [...integ.denied, ...smartDenied] : integ.denied.length ? integ.denied : undefined,
+        mcpServers: smartSession
+          ? (this.colleagues ? { office: officeServer(this, this.colleagues) } : undefined)
+          : this.colleagues || Object.keys(integ.servers).length ? { ...(this.colleagues ? { office: officeServer(this, this.colleagues) } : {}), ...integ.servers } : undefined,
         model: viaOpenRouter ? openrouterSlug(this.cfg.model!) : this.cfg.model,
         // effort is a Claude setting; other models behind OpenRouter may reject it
         effort: viaOpenRouter ? undefined : this.cfg.effort,
@@ -1189,13 +1204,14 @@ export class Employee extends EventEmitter {
         const task = taskId !== undefined ? this.colleagues?.board().tasks.find((x) => x.id === taskId) : undefined;
         const thread = key === "side" ? undefined : taskId !== undefined ? task?.session : this.sessionId;
         const mode = this.cfg.permissionMode ?? "default";
+        const smartSession = !!task && isSmartWorkflowTask(task);
         const started = Date.now();
         const fixedInteg = this.colleagues ? readOnlySession(this.cfg.integrations, (id) => this.colleagues!.gatewayUrl(this, id)) : [];
         const run = runCodexTurn({
           cwd: this.cfg.cwd, prompt: prompt || "-", model: this.cfg.model!, effort: this.cfg.effort, thread, persist: key !== "side", images: files,
-          extraMcp: fixedInteg,
+          extraMcp: smartSession ? [] : fixedInteg,
           instructions: this.buildPrompt() + this.codexExtras(),
-          sandbox: this.meetingTurn || mode === "plan" ? "read-only" : mode === "bypassPermissions" ? "full" : "workspace-write",
+          sandbox: smartSession || this.meetingTurn || mode === "plan" ? "read-only" : mode === "bypassPermissions" ? "full" : "workspace-write",
           writableDirs: this.cfg.dir ? [this.cfg.dir] : [],
           mcpUrl: this.colleagues?.mcpUrl(this),
         }, {
@@ -1463,6 +1479,20 @@ export class Employee extends EventEmitter {
   ): Promise<PermissionResult> {
     // In a meeting people talk; nothing that needs the boss's approval is started from there.
     if (this.meetingTurn) return Promise.resolve({ behavior: "deny", message: t("server.meeting.noTools") });
+    const current = this.taskId === undefined ? undefined
+      : this.colleagues?.board().tasks.find(k => k.id === this.taskId);
+    if (current && isSmartWorkflowTask(current)) {
+      const manager = isSmartCoordinatorTask(current);
+      const allowed = manager
+        ? ["mcp__office__list_colleagues", "mcp__office__submit_workflow_plan",
+          "mcp__office__update_task", "mcp__office__read_notes"]
+        : ["mcp__office__list_colleagues", "mcp__office__read_notes",
+          "mcp__office__share_note", "mcp__office__update_task",
+          "Read", "Glob", "Grep", "WebSearch", "WebFetch"];
+      if (!allowed.includes(toolName)) return Promise.resolve({
+        behavior: "deny", message: "Workflow EVIA: herramienta no autorizada para esta tarea.",
+      });
+    }
     const isQuestion = toolName === "AskUserQuestion";
     const request: AskRequest = {
       requestId: opts.requestId,
