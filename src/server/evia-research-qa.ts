@@ -30,6 +30,14 @@ export function prepareResearchQaWorkflow(
   const request = objective.trim();
   const label = request.replace(/\s+/g, " ").slice(0, 95);
   const marker = "evia-flow:" + workflowId;
+  // Unique titles deliberately avoid EVIA's fuzzy-title deduplication: a shared
+  // workflow marker belongs in note tags and content, not each note title.
+  const noteKey = workflowId.replace(/-/g, "");
+  const planTitle = "Plan-" + noteKey;
+  const researchTitle = "Investigacion-" + noteKey;
+  const qaTitle = "Validacion-" + noteKey;
+  const noteRules = "Incluye en share_note el tag '" + marker +
+    "' y comienza el contenido con '" + marker + "' para que los demás lo encuentren.";
   const noExternal = "Trabaja únicamente dentro del Tablero y sus notas compartidas. No envíes mensajes externos, no publiques, no borres, no despliegues ni modifiques servicios. Si el encargo requiere una acción sensible, prepara la propuesta y detente.";
 
   return [
@@ -38,8 +46,8 @@ export function prepareResearchQaWorkflow(
       owner: "direccion-ia-evia",
       title: "Fabiana | Coordinar: " + label,
       detail: "Objetivo: " + request + "\n\n" + marker +
-        "\nDefine alcance, entregable y criterios de calidad. Usa share_note para guardar una nota titulada '" + marker +
-        " plan' con las instrucciones para Lauren. Solo después marca esta tarea como done mediante update_task. " + noExternal,
+        "\nDefine alcance, entregable y criterios de calidad. Usa share_note para guardar una nota titulada '" + planTitle +
+        "' con las instrucciones para Lauren. " + noteRules + " Solo después marca esta tarea como done mediante update_task. " + noExternal,
       review: false,
     },
     {
@@ -49,7 +57,7 @@ export function prepareResearchQaWorkflow(
       detail: "Objetivo: " + request + "\n\n" + marker +
         "\nDepende del plan de Fabiana. Consulta read_notes con query '" + marker +
         "' y lee la nota completa de planificación. Investiga, distingue hechos de hipótesis y cita fuentes cuando proceda. Guarda el resultado íntegro usando share_note con título '" +
-        marker + " investigación'. Cierra la tarea con update_task únicamente cuando el resultado esté registrado. " + noExternal,
+        researchTitle + "'. " + noteRules + " Cierra la tarea con update_task únicamente cuando el resultado esté registrado. " + noExternal,
       afterKey: "coordinate",
       review: false,
     },
@@ -60,7 +68,7 @@ export function prepareResearchQaWorkflow(
       detail: "Objetivo: " + request + "\n\n" + marker +
         "\nDepende de la investigación de Lauren. Usa read_notes con query '" + marker +
         "' y recupera el documento íntegro. Comprueba criterios, coherencia y fuentes. Si falta evidencia, devuelve observaciones en share_note bajo '" +
-        marker + " QA' y deja la tarea bloqueada; no afirmes que pasó QA. Si aprueba, guarda el dictamen en share_note y usa update_task con status done; quedará en review para aprobación humana. " + noExternal,
+        qaTitle + "'. " + noteRules + " Si falta evidencia, deja la tarea bloqueada y no afirmes que pasó QA. Si aprueba, guarda el dictamen en share_note y usa update_task con status done; quedará en review para aprobación humana. " + noExternal,
       afterKey: "research",
       review: true,
     },
