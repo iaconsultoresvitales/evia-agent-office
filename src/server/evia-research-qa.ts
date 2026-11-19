@@ -22,7 +22,8 @@ export function prepareResearchQaWorkflow(
   if (typeof objective !== "string" || !objective.trim() || objective.trim().length > 1200) {
     throw new Error("Escribe un objetivo de 1 a 1200 caracteres.");
   }
-  const missing = RESEARCH_QA_AGENTS.filter((id) => !new Set(employeeIds).has(id));
+  const present = new Set(employeeIds);
+  const missing = RESEARCH_QA_AGENTS.filter((id) => !present.has(id));
   if (missing.length) throw new Error("Faltan perfiles de esta oficina: " + missing.join(", "));
   if (!/^[0-9a-f-]{36}$/.test(workflowId)) throw new Error("Identificador de flujo inválido.");
 
