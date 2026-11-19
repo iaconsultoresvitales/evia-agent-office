@@ -609,6 +609,23 @@ const boardUI = (() => {
     if (!title || !owner) return;
     if (await call("POST", `${API()}/tasks`, { title, detail: $("newTaskDetail").value, owner, review: $("newTaskReview").checked })) { $("newTaskTitle").value = ""; $("newTaskDetail").value = ""; }
   };
+  $("researchQaForm").onsubmit = async (ev) => {
+    ev.preventDefault();
+    const objective = $("researchQaObjective").value.trim();
+    if (!objective) return;
+    const button = $("researchQaSubmit");
+    button.disabled = true;
+    try {
+      const result = await call("POST", `${API()}/workflows/research-qa`, { objective });
+      if (result?.workflowId) {
+        $("researchQaObjective").value = "";
+        $("researchQaDetails").open = false;
+        toast(`Flujo iniciado: ${result.stages.length} tareas asignadas a Fabiana, Lauren y Vale.`);
+      }
+    } finally {
+      button.disabled = false;
+    }
+  };
   $("newNoteForm").onsubmit = async (ev) => {
     ev.preventDefault();
     const title = $("newNoteTitle").value.trim(), text = $("newNoteText").value.trim();

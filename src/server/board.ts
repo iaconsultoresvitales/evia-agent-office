@@ -2,6 +2,7 @@ import path from "node:path";
 import { EventEmitter } from "node:events";
 import { isObject, readJsonSafe, writeJsonAtomicSync } from "./fsutil.js";
 import { parseTaskContractV1, type TaskContractV1 } from "./task-contract.js";
+import { isEviaResearchQaReview } from "./evia-research-qa.js";
 import type { OfficeEvent } from "./events.js";
 
 /** F1-04 durable task audit outbox. The event is metadata, never task contents. */
@@ -11,6 +12,14 @@ export interface PendingTaskAudit {
   operationId: string;
   taskId: number;
   event: Omit<OfficeEvent, "id" | "ts">;
+}
+
+/** Central guard for EVIA's agentic QA workflow, before any disk mutation. */
+export class WorkflowApprovalError extends Error {
+  constructor(message: string, public readonly status: 403 | 409 = 403) {
+    super(message);
+    this.name = "WorkflowApprovalError";
+  }
 }
 
 export type TaskStatus = "todo" | "doing" | "review" | "done" | "blocked";
@@ -286,6 +295,21 @@ export class Board extends EventEmitter {
   updateTask(id: number, patch: { status?: TaskStatus; owner?: string; title?: string; detail?: string; note?: string; review?: boolean; after?: number[]; contract?: unknown }, by: string, audit?: (task: Task) => PendingTaskAudit): Task | undefined {
     const task = this.data.tasks.find((x) => x.id === id);
     if (!task) return undefined;
+    // QA verdicts from this workflow are always handed to the user in Review.
+    // Managers and agents cannot close them, including via direct Board calls.
+    // "user" is only a caller assertion until F5 adds authenticated identity.
+    if (isEviaResearchQaReview(task) && patch.status === "done") {
+      if (by !== "user") throw new WorkflowApprovalError(
+        "Este dictamen requiere aprobación del usuario en el Tablero.");
+      if (task.status !== "review") throw new WorkflowApprovalError(
+        "La validación de Vale debe estar en revisión antes de aprobarla.", 409);
+      const marker = task.detail.split("\n").map((line) => line.trim())
+        .find((line) => /^evia-flow:[0-9a-f-]{36}$/i.test(line));
+      const qaNote = marker && this.data.notes.some((note) => note.by === task.owner
+        && note.text.includes(marker) && note.text.trim().length > marker.length + 20);
+      if (!qaNote) throw new WorkflowApprovalError(
+        "Falta un dictamen de Vale registrado en las notas del flujo.", 409);
+    }
     // Validate the new contract before any mutation or disk write.
     const acceptedContract = patch.contract === undefined ? undefined : parseTaskContractV1(patch.contract);
     const prev = task.status, prevOwner = task.owner;
