@@ -104,7 +104,7 @@ try {
   const smart = await smartResponse.json();
   assert.equal(smartResponse.status, 201, JSON.stringify(smart));
   assert.equal(smart.mode, "agent-selected");
-  assert.equal(smart.manager, "Fabiana");
+  assert.equal(smart.manager, agents[0][1]);
   const nextBoard = await (await fetch(url + "/api/offices/main/board")).json();
   const newTask = nextBoard.tasks.find(t => t.id === smart.managerTaskId);
   assert.equal(newTask?.owner, "direccion-ia-evia");
