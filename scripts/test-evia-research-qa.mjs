@@ -43,11 +43,11 @@ const fuzzy = (a, b) => {
 assert(fuzzy(titles[0], titles[1]) < 0.7, "Plan and research notes must not collide");
 assert(fuzzy(titles[1], titles[2]) < 0.7, "Research and QA notes must not collide");
 
-// One isolated Board lifecycle proves the manager cannot override Vale's review.
+// One isolated Board lifecycle proves the manager cannot override 18's review.
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "evia-qa-approval-"));
 try {
   const board = new Board(scratch);
-  const qa = board.addTask("product-delivery", "Vale | Revisar workflow",
+  const qa = board.addTask("product-delivery", "18 | Revisar workflow",
     steps[2].detail, "user", true);
   board.updateTask(qa.id, { status: "review", note: "Dictamen registrado" }, "product-delivery");
   const before = fs.readFileSync(path.join(scratch, "board.json"), "utf8");
@@ -60,15 +60,15 @@ try {
   }
   assert.throws(() => board.updateTask(qa.id, { status: "done" }, "user"),
     err => err instanceof WorkflowApprovalError && err.status === 409,
-    "User approval requires Vale's registered QA note");
+    "User approval requires 18's registered QA note");
   const marker = "evia-flow:" + id;
-  board.addNote("product-delivery", "Vale", "Validacion-" + id.replace(/-/g, ""),
+  board.addNote("product-delivery", "18", "Validacion-" + id.replace(/-/g, ""),
     marker + "\nDictamen: APROBADO. Los cinco criterios del caso se cumplen.",
     ["evia-flow"]);
   board.updateTask(qa.id, { status: "done", note: "Aprobación del usuario" }, "user");
   assert.equal(board.tasks.find(x => x.id === qa.id).status, "done");
 
-  const early = board.addTask("product-delivery", "Vale | Sin dictamen",
+  const early = board.addTask("product-delivery", "18 | Sin dictamen",
     steps[2].detail, "user", true);
   assert.throws(() => board.updateTask(early.id, { status: "done" }, "user"),
     err => err instanceof WorkflowApprovalError && err.status === 409,
