@@ -1,3 +1,5 @@
+import { eviaAgentDisplayName } from "./evia-agent-names.js";
+
 /**
  * EVIA's first repeatable multi-agent workflow.
  * Inspired by Rein's specialist -> dependency -> review pattern; runs through
@@ -56,18 +58,18 @@ export function prepareResearchQaWorkflow(
     {
       key: "coordinate",
       owner: "direccion-ia-evia",
-      title: "Fabiana | Coordinar: " + label,
+      title: eviaAgentDisplayName("direccion-ia-evia") + " | Coordinar: " + label,
       detail: "Objetivo: " + request + "\n\n" + marker +
         "\nDefine alcance, entregable y criterios de calidad. Usa share_note para guardar una nota titulada '" + planTitle +
-        "' con las instrucciones para Lauren. " + noteRules + " Solo después marca esta tarea como done mediante update_task. " + noExternal,
+        "' con las instrucciones para " + eviaAgentDisplayName("lauren") + ". " + noteRules + " Solo después marca esta tarea como done mediante update_task. " + noExternal,
       review: false,
     },
     {
       key: "research",
       owner: "lauren",
-      title: "Lauren | Investigar: " + label,
+      title: eviaAgentDisplayName("lauren") + " | Investigar: " + label,
       detail: "Objetivo: " + request + "\n\n" + marker +
-        "\nDepende del plan de Fabiana. Consulta read_notes con query '" + marker +
+        "\nDepende del plan de " + eviaAgentDisplayName("direccion-ia-evia") + ". Consulta read_notes con query '" + marker +
         "' y lee la nota completa de planificación. Investiga, distingue hechos de hipótesis y cita fuentes cuando proceda. Guarda el resultado íntegro usando share_note con título '" +
         researchTitle + "'. " + noteRules + " Cierra la tarea con update_task únicamente cuando el resultado esté registrado. " + noExternal,
       afterKey: "coordinate",
@@ -76,9 +78,9 @@ export function prepareResearchQaWorkflow(
     {
       key: "quality",
       owner: "product-delivery",
-      title: "Vale | Validar: " + label,
+      title: eviaAgentDisplayName("product-delivery") + " | Validar: " + label,
       detail: "Objetivo: " + request + "\n\n" + marker +
-        "\nDepende de la investigación de Lauren. Usa read_notes con query '" + marker +
+        "\nDepende de la investigación de " + eviaAgentDisplayName("lauren") + ". Usa read_notes con query '" + marker +
         "' y recupera el documento íntegro. Comprueba criterios, coherencia y fuentes. Si falta evidencia, devuelve observaciones en share_note bajo '" +
         qaTitle + "'. " + noteRules + " Si falta evidencia, deja la tarea bloqueada y no afirmes que pasó QA. Si aprueba, guarda el dictamen en share_note y usa update_task con status done; quedará en review para aprobación humana. " + noExternal,
       afterKey: "research",
