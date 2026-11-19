@@ -1,6 +1,6 @@
 # EVIA F2 | Primer workflow multiagente: Fabiana → Lauren → Vale
 
-**Estado:** implementación propuesta en rama de desarrollo, pendiente de CI y de una ejecución real en una instalación separada. No fusionado ni desplegado.
+**Estado:** IMPLEMENTADO en PR #26; primera ejecución real completada el 18 de noviembre de 2026 en oficina temporal de macOS (Fabiana → Lauren → Vale; notas #1-#3). La última corrección de aprobación requiere CI independiente. No fusionado ni desplegado en la oficina principal.
 
 ## Qué se construyó
 
@@ -8,7 +8,7 @@ En el Tablero aparece **Nuevo flujo EVIA: Fabiana → Lauren → Vale**. El usua
 
 1. Fabiana coordina y guarda una nota de plan.
 2. Lauren investiga después del cierre de Fabiana y guarda el resultado completo en una nota.
-3. Vale valida después del cierre de Lauren, registra QA y deja la tarea en `review`, pendiente de aprobación humana.
+3. Vale valida después del cierre de Lauren, registra QA y deja la tarea en `review`, pendiente de aprobación del usuario desde el Tablero.
 
 Se usa un identificador `evia-flow:<uuid>` en instrucciones/notas para correlacionar el traspaso. El Tablero existente registra estados, sesiones y costes. Ninguna tarea creada tiene permiso implícito para enviar correos, WhatsApp, publicar o desplegar.
 
@@ -18,11 +18,21 @@ Se usa un identificador `evia-flow:<uuid>` en instrucciones/notas para correlaci
 
 Tampoco se sustituye Task OS por Planner. El flujo se apoya en el Board legacy actual, con miras a migrarlo a Task Contracts cuando el coordinador operativo y los permisos por proyecto estén disponibles.
 
+## Aprobación final — control incremental
+
+Para las tareas de QA de este workflow (`owner=product-delivery`, `review=true` y marcador válido `evia-flow:<uuid>`), el núcleo de `Board.updateTask` rechaza cualquier transición a `done` cuyo actor no sea `user`. También rechaza el cierre anticipado si no está en `review` o falta una nota de Vale que contenga el marcador del flujo. Un rechazo no modifica el archivo persistido del Tablero.
+
+El tool `update_task` del Project Manager también muestra una negativa amigable. Las otras tareas y revisiones tradicionales no cambian su conducta.
+
+**Límite de seguridad:** EVIA sigue siendo una aplicación de acceso local **sin autenticación de usuario**. El actor `user` en el endpoint REST es una aserción de la capa host, no una identidad autenticada criptográficamente. Un proceso local con acceso HTTP puede suplantarlo. El control actual evita la aprobación automática a través del runtime normal de agentes, pero **no constituye todavía el Policy Engine F5 ni una garantía de aprobación humana para una instalación empresarial multiusuario**. No habilitar acceso remoto.
+
+**Dato de implementación:** las etiquetas del notebook se acortan a 30 caracteres; por eso el tag debe ser `evia-flow` y el UUID completo va en el texto de cada nota.
+
 ## Verificación mínima
 
 - `npm run typecheck`, `npm run build` y `npm test`; el script `test-evia-research-qa.mjs` verifica roles, orden y casos inválidos.
-- En **una copia independiente de datos**, crear un workflow de prueba con los tres agentes configurados y confirmar: Fabiana ejecuta, se genera la nota, Lauren recibe el traspaso, Vale registra el dictamen, y el resultado queda en revisión.
+- En **una copia independiente de datos**, ejecución real verificada (notas #1, #2 y #3, veredicto de Vale APROBADO). La primera ejecución detectó que Fabiana podía cerrar QA; la corrección posterior bloquea esa transición por el agente y conserva la aprobación para el usuario.
 - Un agente requerido ausente debe causar HTTP 409 sin crear ninguna tarea.
 - No usar datos privados de clientes hasta disponer de aislamiento real por proyecto y de políticas ejecutables.
 
-La opción vive en una rama de desarrollo. No sustituir el código o datos del Mac operativo sin ese smoke funcional.
+La opción vive en la rama de desarrollo y PR #26. No sustituir el código o datos del Mac operativo sin una comprobación de la última corrección en entorno aislado; falta política autenticada antes de distribuir a clientes.
